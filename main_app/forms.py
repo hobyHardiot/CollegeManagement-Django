@@ -227,4 +227,4 @@ class GroupeForm(forms.ModelForm):
 
     class Meta:
         model = Groupe
-        fields = ['numero', 'projet', 'etudiants']
+        fields = ['numero', 'etudiants']

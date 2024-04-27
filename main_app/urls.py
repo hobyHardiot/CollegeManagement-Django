@@ -43,6 +43,9 @@ urlpatterns = [
     path("groupe/manage", hod_views.manage_groupe, name='manage_groupe'), 
     path("groupe/add", hod_views.add_groupe, name='add_groupe'),
     path("groupe/edit/<int:groupe_id>", hod_views.edit_groupe, name='edit_groupe'),
+
+
+    path("project/assign", hod_views.assign_project, name='assign_project'),
  
 
 

@@ -9,6 +9,7 @@ from django.templatetags.static import static
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import UpdateView
+import random
 
 from .forms import *
 from .models import *
@@ -929,3 +930,21 @@ def edit_groupe(request, groupe_id):
     #         messages.error(request, "Please Fill Form Properly!")
     # else:
     return render(request, "hod_template/edit_groupe_template.html", context)
+
+
+def assign_project(request): 
+    groupes = list(Groupe.objects.all())
+    projets = list(Projet.objects.all())
+    students = Students.objects.all()
+    context = {
+        'students': students,
+        'page_title': 'Manage Groupe'
+    }
+
+    random.shuffle(projets)
+    for i, groupe in enumerate(groupes):
+        # Assigner le projet au groupe
+        groupe.projet = projets[i]
+        groupe.save()
+
+    return render(request, "hod_template/manage_groupe.html", context)
