@@ -35,138 +35,9 @@ def staff_home(request):
         'attendance_list': attendance_list
     }
     return render(request, 'staff_template/home_content.html', context)
-
-
-def staff_take_attendance(request):
-    staff = get_object_or_404(Staff, admin=request.user)
-    subjects = Subject.objects.filter(staff_id=staff)
-    sessions = Session.objects.all()
-    context = {
-        'subjects': subjects,
-        'sessions': sessions,
-        'page_title': 'Take Attendance'
-    }
-
-    return render(request, 'staff_template/staff_take_attendance.html', context)
-
-
-@csrf_exempt
-def get_students(request):
-    subject_id = request.POST.get('subject')
-    session_id = request.POST.get('session')
-    try:
-        subject = get_object_or_404(Subject, id=subject_id)
-        session = get_object_or_404(Session, id=session_id)
-        students = Student.objects.filter(
-            course_id=subject.course.id, session=session)
-        student_data = []
-        for student in students:
-            data = {
-                    "id": student.id,
-                    "name": student.admin.last_name + " " + student.admin.first_name
-                    }
-            student_data.append(data)
-        return JsonResponse(json.dumps(student_data), content_type='application/json', safe=False)
-    except Exception as e:
-        return e
-
-
-@csrf_exempt
-def save_attendance(request):
-    student_data = request.POST.get('student_ids')
-    date = request.POST.get('date')
-    subject_id = request.POST.get('subject')
-    session_id = request.POST.get('session')
-    students = json.loads(student_data)
-    try:
-        session = get_object_or_404(Session, id=session_id)
-        subject = get_object_or_404(Subject, id=subject_id)
-        attendance = Attendance(session=session, subject=subject, date=date)
-        attendance.save()
-
-        for student_dict in students:
-            student = get_object_or_404(Student, id=student_dict.get('id'))
-            attendance_report = AttendanceReport(student=student, attendance=attendance, status=student_dict.get('status'))
-            attendance_report.save()
-    except Exception as e:
-        return None
-
-    return HttpResponse("OK")
-
-
-def staff_update_attendance(request):
-    staff = get_object_or_404(Staff, admin=request.user)
-    subjects = Subject.objects.filter(staff_id=staff)
-    sessions = Session.objects.all()
-    context = {
-        'subjects': subjects,
-        'sessions': sessions,
-        'page_title': 'Update Attendance'
-    }
-
-    return render(request, 'staff_template/staff_update_attendance.html', context)
-
-
-@csrf_exempt
-def get_student_attendance(request):
-    attendance_date_id = request.POST.get('attendance_date_id')
-    try:
-        date = get_object_or_404(Attendance, id=attendance_date_id)
-        attendance_data = AttendanceReport.objects.filter(attendance=date)
-        student_data = []
-        for attendance in attendance_data:
-            data = {"id": attendance.student.admin.id,
-                    "name": attendance.student.admin.last_name + " " + attendance.student.admin.first_name,
-                    "status": attendance.status}
-            student_data.append(data)
-        return JsonResponse(json.dumps(student_data), content_type='application/json', safe=False)
-    except Exception as e:
-        return e
-
-
-@csrf_exempt
-def update_attendance(request):
-    student_data = request.POST.get('student_ids')
-    date = request.POST.get('date')
-    students = json.loads(student_data)
-    try:
-        attendance = get_object_or_404(Attendance, id=date)
-
-        for student_dict in students:
-            student = get_object_or_404(
-                Student, admin_id=student_dict.get('id'))
-            attendance_report = get_object_or_404(AttendanceReport, student=student, attendance=attendance)
-            attendance_report.status = student_dict.get('status')
-            attendance_report.save()
-    except Exception as e:
-        return None
-
-    return HttpResponse("OK")
-
-
-def staff_apply_leave(request):
-    form = LeaveReportStaffForm(request.POST or None)
-    staff = get_object_or_404(Staff, admin_id=request.user.id)
-    context = {
-        'form': form,
-        'leave_history': LeaveReportStaff.objects.filter(staff=staff),
-        'page_title': 'Apply for Leave'
-    }
-    if request.method == 'POST':
-        if form.is_valid():
-            try:
-                obj = form.save(commit=False)
-                obj.staff = staff
-                obj.save()
-                messages.success(
-                    request, "Application for leave has been submitted for review")
-                return redirect(reverse('staff_apply_leave'))
-            except Exception:
-                messages.error(request, "Could not apply!")
-        else:
-            messages.error(request, "Form has errors!")
-    return render(request, "staff_template/staff_apply_leave.html", context)
-
+   
+ 
+ 
 
 def staff_feedback(request):
     form = FeedbackStaffForm(request.POST or None)
@@ -241,63 +112,100 @@ def staff_fcmtoken(request):
         return HttpResponse("True")
     except Exception as e:
         return HttpResponse("False")
+ 
 
-
-def staff_view_notification(request):
-    staff = get_object_or_404(Staff, admin=request.user)
-    notifications = NotificationStaff.objects.filter(staff=staff)
+def staff_view_groupe(request): 
+    prerequisGroupes = PrerequisGroupe.objects.all()
     context = {
-        'notifications': notifications,
-        'page_title': "View Notifications"
+        'prerequisGroupes': prerequisGroupes,
+        'page_title': 'Manage Groupe'
     }
-    return render(request, "staff_template/staff_view_notification.html", context)
+    return render(request, "staff_template/manage_groupe.html", context)
 
 
-def staff_add_result(request):
-    staff = get_object_or_404(Staff, admin=request.user)
-    subjects = Subject.objects.filter(staff=staff)
-    sessions = Session.objects.all()
+def staff_add_groupe(request):
+    if request.method == 'POST':
+        form = PrerequisGroupeForm(request.POST)
+        if form.is_valid():
+            try:
+                form.save()
+                messages.success(request, "Successfully Added")
+                return redirect('staff_view_groupe')
+             
+            except Exception as e:
+                messages.error(request, "Could Not Add" + str(e))
+    else:
+        form = PrerequisGroupeForm()
+    return render(request, 'staff_template/add_groupe_template.html', {'form': form})
+
+
+
+def manage_project(request): 
+    projects = Projet.objects.all()
     context = {
-        'page_title': 'Result Upload',
-        'subjects': subjects,
-        'sessions': sessions
+        'projects': projects,
+        'page_title': 'Manage projects'
+    }
+    return render(request, "staff_template/manage_project.html", context)
+
+
+def add_project(request):
+    form = ProjectForm(request.POST or None)
+    context = {
+        'form': form,
+        'page_title': 'Add project'
     }
     if request.method == 'POST':
-        try:
-            student_id = request.POST.get('student_list')
-            subject_id = request.POST.get('subject')
-            test = request.POST.get('test')
-            exam = request.POST.get('exam')
-            student = get_object_or_404(Student, id=student_id)
-            subject = get_object_or_404(Subject, id=subject_id)
+        if form.is_valid():
+            nom = form.cleaned_data.get('nom')
+            description = form.cleaned_data.get('description')
             try:
-                data = StudentResult.objects.get(
-                    student=student, subject=subject)
-                data.exam = exam
-                data.test = test
-                data.save()
-                messages.success(request, "Scores Updated")
+                project = Projet()
+                project.nom = nom
+                project.description = description
+                project.save()
+                messages.success(request, "Successfully Added")
+                return redirect(reverse('manage_project'))
             except:
-                result = StudentResult(student=student, subject=subject, test=test, exam=exam)
-                result.save()
-                messages.success(request, "Scores Saved")
-        except Exception as e:
-            messages.warning(request, "Error Occured While Processing Form")
-    return render(request, "staff_template/staff_add_result.html", context)
+                messages.error(request, "Could Not Add")
+        else:
+            messages.error(request, "Could Not Add")
+    return render(request, 'staff_template/add_project_template.html', context)
 
 
-@csrf_exempt
-def fetch_student_result(request):
+def edit_project(request, project_id):
+    project = get_object_or_404(Projet, id=project_id)
+    form = ProjectForm(request.POST or None, instance=project)
+    context = {
+        'form': form,
+        'project_id': project_id,
+        'page_title': 'Edit project'
+    }
+    if request.method == 'POST':
+        if form.is_valid():
+            nom = form.cleaned_data.get('nom')
+            description = form.cleaned_data.get('description') 
+            try: 
+                project.nom = nom
+                project.description = description 
+                project.save()
+                messages.success(request, "Successfully Updated")
+                return redirect(reverse('manage_project'))
+            except Exception as e:
+                messages.error(request, "Could Not Update " + str(e))
+        else:
+            messages.error(request, "Please Fill Form Properly!")
+    else:
+        return render(request, "staff_template/edit_project_template.html", context)
+    
+
+def delete_project(request, project_id):
+    project = get_object_or_404(Projet, id=project_id)
     try:
-        subject_id = request.POST.get('subject')
-        student_id = request.POST.get('student')
-        student = get_object_or_404(Student, id=student_id)
-        subject = get_object_or_404(Subject, id=subject_id)
-        result = StudentResult.objects.get(student=student, subject=subject)
-        result_data = {
-            'exam': result.exam,
-            'test': result.test
-        }
-        return HttpResponse(json.dumps(result_data))
-    except Exception as e:
-        return HttpResponse('False')
+        project.delete()
+        messages.success(request, "Project deleted successfully!")
+    except Exception:
+        messages.error(
+            request, "Sorry, try again")
+    return redirect(reverse('manage_project'))
+

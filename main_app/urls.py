@@ -29,10 +29,6 @@ urlpatterns = [
     path("staff/add", hod_views.add_staff, name='add_staff'),
 
 
-    path("project/manage", hod_views.manage_project, name='manage_project'), 
-    path("project/add", hod_views.add_project, name='add_project'),
-    path("project/edit/<int:project_id>", hod_views.edit_project, name='edit_project'),
-    path("project/delete/<int:project_id>", hod_views.delete_project, name='delete_project'),
 
     path("students/manage", hod_views.manage_students, name='manage_students'), 
     path("students/add", hod_views.add_students, name='add_students'),
@@ -40,12 +36,10 @@ urlpatterns = [
     path("students/delete/<int:students_id>", hod_views.delete_students, name='delete_students'),
 
 
-    path("groupe/manage", hod_views.manage_groupe, name='manage_groupe'), 
-    path("groupe/add", hod_views.add_groupe, name='add_groupe'),
-    path("groupe/edit/<int:groupe_id>", hod_views.edit_groupe, name='edit_groupe'),
 
 
     path("project/assign", hod_views.assign_project, name='assign_project'),
+    path("project/assign2", hod_views.assign_project_manytoone, name='assign_project_manytoone'),
  
 
 
@@ -107,49 +101,31 @@ urlpatterns = [
 
 
     # Staff
-    path("staff/home/", staff_views.staff_home, name='staff_home'),
-    path("staff/apply/leave/", staff_views.staff_apply_leave,
-         name='staff_apply_leave'),
+    path("staff/home/", staff_views.staff_home, name='staff_home'), 
     path("staff/feedback/", staff_views.staff_feedback, name='staff_feedback'),
-    path("staff/view/profile/", staff_views.staff_view_profile,
-         name='staff_view_profile'),
-    path("staff/attendance/take/", staff_views.staff_take_attendance,
-         name='staff_take_attendance'),
-    path("staff/attendance/update/", staff_views.staff_update_attendance,
-         name='staff_update_attendance'),
-    path("staff/get_students/", staff_views.get_students, name='get_students'),
-    path("staff/attendance/fetch/", staff_views.get_student_attendance,
-         name='get_student_attendance'),
-    path("staff/attendance/save/",
-         staff_views.save_attendance, name='save_attendance'),
-    path("staff/attendance/update/",
-         staff_views.update_attendance, name='update_attendance'),
-    path("staff/fcmtoken/", staff_views.staff_fcmtoken, name='staff_fcmtoken'),
-    path("staff/view/notification/", staff_views.staff_view_notification,
-         name="staff_view_notification"),
-    path("staff/result/add/", staff_views.staff_add_result, name='staff_add_result'),
-    path("staff/result/edit/", EditResultView.as_view(),
-         name='edit_student_result'),
-    path('staff/result/fetch/', staff_views.fetch_student_result,
-         name='fetch_student_result'),
+    path("staff/view/profile/", staff_views.staff_view_profile, name='staff_view_profile'),    
+    path("staff/fcmtoken/", staff_views.staff_fcmtoken, name='staff_fcmtoken'), 
+    path("staff/groupe/view", staff_views.staff_view_groupe, name='staff_view_groupe'),  
+    path("staff/groupe/add", staff_views.staff_add_groupe, name='staff_add_groupe'),
 
+    path("staff/project/manage", staff_views.manage_project, name='manage_project'), 
+    path("staff/project/add", staff_views.add_project, name='add_project'),
+    path("staff/project/edit/<int:project_id>", staff_views.edit_project, name='edit_project'),
+    path("staff/project/delete/<int:project_id>", staff_views.delete_project, name='delete_project'),
 
 
     # Student
-    path("student/home/", student_views.student_home, name='student_home'),
-    path("student/view/attendance/", student_views.student_view_attendance,
-         name='student_view_attendance'),
-    path("student/apply/leave/", student_views.student_apply_leave,
-         name='student_apply_leave'),
+    path("student/home/", student_views.student_home, name='student_home'),  
     path("student/feedback/", student_views.student_feedback,
          name='student_feedback'),
     path("student/view/profile/", student_views.student_view_profile,
          name='student_view_profile'),
     path("student/fcmtoken/", student_views.student_fcmtoken,
-         name='student_fcmtoken'),
-    path("student/view/notification/", student_views.student_view_notification,
-         name="student_view_notification"),
-    path('student/view/result/', student_views.student_view_result,
-         name='student_view_result'),
+         name='student_fcmtoken'),  
 
+    path("student/lists/", student_views.view_students, name='view_students'),
+
+    path("groupe/manage", student_views.manage_groupe, name='manage_groupe'), 
+    path("groupe/add", student_views.add_groupe, name='add_groupe'),
+    path("groupe/edit/<int:groupe_id>", student_views.edit_groupe, name='edit_groupe'),
 ]

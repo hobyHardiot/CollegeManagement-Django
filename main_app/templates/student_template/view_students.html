@@ -7,45 +7,35 @@
 <section class="content">
     <div class="container-fluid">
         <div class="row">
-            <div class="col-md-12">
-                <div class="d-flex justify-content-end">
-                    <a href="{% url 'add_groupe' %}">
-                        <button class="btn btn-primary mb-3">Add groupe</button>
-                    </a>
-                </div> 
-                <div class="d-flex justify-content-end">
-                    <a href="{% url 'assign_project' %}">
-                        <button class="btn btn-primary mb-3">Assign project</button>
-                    </a>
-                </div> 
+            <div class="col-md-12"> 
                 <div class="card">
                     <div class="card-header">
                         <h3 class="card-title">{{page_title}}</h3>
                     </div>
                     <!-- /.card-header -->
                     <div class="card-body">
-
                         <table id="example2" class="table table-bordered table-hover">
                             <thead class="thead-dark">
                                 <tr>
                                     <th>Mattricule</th>
                                     <th>Full Name</th>
-                                    <th>Groupe</th>
-                                    <th>Project</th>  
+                                    <th>Mobile number</th>
+                                    <th>Adress</th> 
+                                    <th>Level</th>  
                                 </tr>
                             </thead>
                             <tbody>
-                                {% for student in students %} 
+                                {% for student in students %}
                                 <tr> 
                                     <td>{{student.numMattr}}</td>
-                                    <td>{{student.firstname}}, {{student.lastname}}</td>
-                                    <td>{{ student.groupe_set.first.numero }} </td> 
-                                    <td>{{ student.groupe_set.first.projet.nom }} </td> 
-                                </tr> 
+                                    <td>{{student.firstname}}  {{student.lastname}}</td>
+                                    <td>{{student.mobile_number}}</td>
+                                    <td>{{student.location}}</td> 
+                                    <td>{{student.niveau}}</td>  
+                                </tr>
                                 {% endfor %}
                             </tbody>
                         </table>
-
                     </div>
                 </div>
             </div>

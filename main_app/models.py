@@ -211,7 +211,8 @@ class Students(models.Model):
     lastname = models.CharField(max_length=40, blank=False)
     mobile_number = models.CharField(max_length=10, blank=True) 
     location = models.CharField(max_length=255, blank=False)
-    dateBirth = models.DateField('%m/%d/%Y') 
+    dateBirth = models.DateField('%m/%d/%Y',null=True) 
+    niveau = models.ForeignKey(Course, on_delete=models.CASCADE, default="")
 
     def __str__(self):
         return self.numMattr+" "+self.firstname+" "+self.lastname
@@ -222,3 +223,11 @@ class Groupe(models.Model):
     numero = models.IntegerField(unique=True)  # Le numéro du groupe
     etudiants = models.ManyToManyField(Students)
     projet = models.ForeignKey(Projet, on_delete=models.CASCADE)
+
+class PrerequisGroupe(models.Model):
+    module = models.CharField(max_length=40, blank=False)
+    niveau = models.ForeignKey(Course, on_delete=models.CASCADE, default="")
+    status = models.BooleanField(default=False)
+    delais = models.IntegerField(blank=False) 
+    def __str__(self):
+        return self.module

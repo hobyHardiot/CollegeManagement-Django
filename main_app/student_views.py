@@ -37,7 +37,7 @@ def student_home(request):
         subject_name.append(subject.name)
         data_present.append(present_count)
         data_absent.append(absent_count)
-    context = {
+    context = { 
         'total_attendance': total_attendance,
         'percent_present': percent_present,
         'percent_absent': percent_absent,
@@ -46,69 +46,12 @@ def student_home(request):
         'data_present': data_present,
         'data_absent': data_absent,
         'data_name': subject_name,
-        'page_title': 'Student Homepage'
+        'page_title': 'Student Homepage',
 
     }
     return render(request, 'student_template/home_content.html', context)
 
-
-@ csrf_exempt
-def student_view_attendance(request):
-    student = get_object_or_404(Student, admin=request.user)
-    if request.method != 'POST':
-        course = get_object_or_404(Course, id=student.course.id)
-        context = {
-            'subjects': Subject.objects.filter(course=course),
-            'page_title': 'View Attendance'
-        }
-        return render(request, 'student_template/student_view_attendance.html', context)
-    else:
-        subject_id = request.POST.get('subject')
-        start = request.POST.get('start_date')
-        end = request.POST.get('end_date')
-        try:
-            subject = get_object_or_404(Subject, id=subject_id)
-            start_date = datetime.strptime(start, "%Y-%m-%d")
-            end_date = datetime.strptime(end, "%Y-%m-%d")
-            attendance = Attendance.objects.filter(
-                date__range=(start_date, end_date), subject=subject)
-            attendance_reports = AttendanceReport.objects.filter(
-                attendance__in=attendance, student=student)
-            json_data = []
-            for report in attendance_reports:
-                data = {
-                    "date":  str(report.attendance.date),
-                    "status": report.status
-                }
-                json_data.append(data)
-            return JsonResponse(json.dumps(json_data), safe=False)
-        except Exception as e:
-            return None
-
-
-def student_apply_leave(request):
-    form = LeaveReportStudentForm(request.POST or None)
-    student = get_object_or_404(Student, admin_id=request.user.id)
-    context = {
-        'form': form,
-        'leave_history': LeaveReportStudent.objects.filter(student=student),
-        'page_title': 'Apply for leave'
-    }
-    if request.method == 'POST':
-        if form.is_valid():
-            try:
-                obj = form.save(commit=False)
-                obj.student = student
-                obj.save()
-                messages.success(
-                    request, "Application for leave has been submitted for review")
-                return redirect(reverse('student_apply_leave'))
-            except Exception:
-                messages.error(request, "Could not submit")
-        else:
-            messages.error(request, "Form has errors!")
-    return render(request, "student_template/student_apply_leave.html", context)
-
+ 
 
 def student_feedback(request):
     form = FeedbackStudentForm(request.POST or None)
@@ -186,22 +129,67 @@ def student_fcmtoken(request):
     except Exception as e:
         return HttpResponse("False")
 
+  
 
-def student_view_notification(request):
-    student = get_object_or_404(Student, admin=request.user)
-    notifications = NotificationStudent.objects.filter(student=student)
+####
+
+def view_students(request): 
+    students = Students.objects.all()
     context = {
-        'notifications': notifications,
-        'page_title': "View Notifications"
+        'students': students,
+        'page_title': 'View students'
     }
-    return render(request, "student_template/student_view_notification.html", context)
+    return render(request, "student_template/view_students.html", context)
 
 
-def student_view_result(request):
-    student = get_object_or_404(Student, admin=request.user)
-    results = StudentResult.objects.filter(student=student)
+
+def manage_groupe(request): 
+    students = Students.objects.all()
     context = {
-        'results': results,
-        'page_title': "View Results"
+        'students': students,
+        'page_title': 'Manage Groupe'
     }
-    return render(request, "student_template/student_view_result.html", context)
+    return render(request, "student_template/manage_groupe.html", context)
+
+
+
+def add_groupe(request):
+    if request.method == 'POST':
+        form = GroupeForm(request.POST)
+        if form.is_valid():
+            try:
+                form.save()
+                messages.success(request, "Successfully Added")
+                return redirect('manage_groupe')
+             
+            except Exception as e:
+                messages.error(request, "Could Not Add" + str(e))
+    else:
+        form = GroupeForm()
+    return render(request, 'student_template/add_groupe_template.html', {'form': form})
+
+ 
+def edit_groupe(request, groupe_id):
+    groupe = get_object_or_404(Groupe, id=groupe_id)
+    form = GroupeForm(request.POST or None, instance=groupe)
+    context = {
+        'form': form,
+        'groupe_id': groupe_id,
+        'page_title': 'Edit groupe'
+    }
+    # if request.method == 'POST':
+    #     if form.is_valid():
+    #         nom = form.cleaned_data.get('nom')
+    #         description = form.cleaned_data.get('description') 
+    #         try: 
+    #             students.nom = nom
+    #             students.description = description 
+    #             students.save()
+    #             messages.success(request, "Successfully Updated")
+    #             return redirect(reverse('manage_students'))
+    #         except Exception as e:
+    #             messages.error(request, "Could Not Update " + str(e))
+    #     else:
+    #         messages.error(request, "Please Fill Form Properly!")
+    # else:
+    return render(request, "student_template/edit_groupe_template.html", context)

@@ -209,7 +209,7 @@ class StudentsForm(FormSettings):
 
     class Meta:
         model = Students
-        fields = ['numMattr','firstname','lastname','mobile_number','location']
+        fields = ['numMattr','firstname','lastname','mobile_number','location','niveau']
 
 
 class Select2MultipleWidgetCustom(Select2MultipleWidget):
@@ -228,3 +228,13 @@ class GroupeForm(forms.ModelForm):
     class Meta:
         model = Groupe
         fields = ['numero', 'etudiants']
+
+
+
+class PrerequisGroupeForm(FormSettings):
+    def __init__(self, *args, **kwargs):
+        super(PrerequisGroupeForm, self).__init__(*args, **kwargs)
+
+    class Meta:
+        model = PrerequisGroupe
+        fields = ['module','niveau','delais']

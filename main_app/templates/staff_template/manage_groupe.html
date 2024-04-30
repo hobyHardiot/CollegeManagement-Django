@@ -1,0 +1,57 @@
+{% extends 'main_app/base.html' %}
+{% load static %}
+{% block page_title %}{{page_title}}{% endblock page_title %}
+
+{% block content %}
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="d-flex justify-content-end">
+                    <a href="{% url 'staff_add_groupe' %}">
+                        <button class="btn btn-primary mb-3">Add groupe</button>
+                    </a>
+                </div> 
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">{{page_title}}</h3>
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body">
+
+                        <table id="example2" class="table table-bordered table-hover">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th>Id</th>
+                                    <th>Module</th>
+                                    <th>Level</th>
+                                    <th>Delais</th>  
+                                    <th>Status</th>  
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for prerequisGroupe in prerequisGroupes %} 
+                                <tr> 
+                                    <td>{{forloop.counter}}</td>
+                                    <td>{{prerequisGroupe.module}}</td>
+                                    <td>{{ prerequisGroupe.niveau }} </td> 
+                                    <td>{{ prerequisGroupe.delais }} days</td>    
+                                    {% if prerequisGroupe.status  == 0 %}
+                                        <td><span  class='badge badge-secondary'>Pending</span></td>
+                                        {% elif prerequisGroupe.status  == 1 %}
+                                        <td> <button data-toggle = "modal" data-target = "#reply_modal" value="{{leave.id}}" class="btn btn-success">Ready</button></td>
+
+                                        {% endif %}  
+                                </tr> 
+                                {% endfor %}
+                            </tbody>
+                        </table>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock content %}

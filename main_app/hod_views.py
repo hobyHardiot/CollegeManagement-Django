@@ -730,76 +730,6 @@ def delete_session(request, session_id):
 
 #myEdit
 
-def manage_project(request): 
-    projects = Projet.objects.all()
-    context = {
-        'projects': projects,
-        'page_title': 'Manage projects'
-    }
-    return render(request, "hod_template/manage_project.html", context)
-
-
-def add_project(request):
-    form = ProjectForm(request.POST or None)
-    context = {
-        'form': form,
-        'page_title': 'Add project'
-    }
-    if request.method == 'POST':
-        if form.is_valid():
-            nom = form.cleaned_data.get('nom')
-            description = form.cleaned_data.get('description')
-            try:
-                project = Projet()
-                project.nom = nom
-                project.description = description
-                project.save()
-                messages.success(request, "Successfully Added")
-                return redirect(reverse('manage_project'))
-            except:
-                messages.error(request, "Could Not Add")
-        else:
-            messages.error(request, "Could Not Add")
-    return render(request, 'hod_template/add_project_template.html', context)
-
-
-def edit_project(request, project_id):
-    project = get_object_or_404(Projet, id=project_id)
-    form = ProjectForm(request.POST or None, instance=project)
-    context = {
-        'form': form,
-        'project_id': project_id,
-        'page_title': 'Edit project'
-    }
-    if request.method == 'POST':
-        if form.is_valid():
-            nom = form.cleaned_data.get('nom')
-            description = form.cleaned_data.get('description') 
-            try: 
-                project.nom = nom
-                project.description = description 
-                project.save()
-                messages.success(request, "Successfully Updated")
-                return redirect(reverse('manage_project'))
-            except Exception as e:
-                messages.error(request, "Could Not Update " + str(e))
-        else:
-            messages.error(request, "Please Fill Form Properly!")
-    else:
-        return render(request, "hod_template/edit_project_template.html", context)
-    
-
-def delete_project(request, project_id):
-    project = get_object_or_404(Projet, id=project_id)
-    try:
-        project.delete()
-        messages.success(request, "Project deleted successfully!")
-    except Exception:
-        messages.error(
-            request, "Sorry, try again")
-    return redirect(reverse('manage_project'))
-
-
 
     #students
 
@@ -825,6 +755,7 @@ def add_students(request):
             lastname = form.cleaned_data.get('lastname')
             mobile_number = form.cleaned_data.get('mobile_number')
             location = form.cleaned_data.get('location')
+            niveau = form.cleaned_data.get('niveau')
             try:
                 students = Students()
                 students.numMattr = numMattr
@@ -832,11 +763,12 @@ def add_students(request):
                 students.lastname = lastname
                 students.mobile_number = mobile_number
                 students.location = location
+                students.niveau = niveau
                 students.save()
                 messages.success(request, "Successfully Added")
                 return redirect(reverse('manage_students'))
-            except:
-                messages.error(request, "Could Not Add")
+            except Exception as e:
+                messages.error(request, "Could Not add " + str(e))
         else:
             messages.error(request, "Could Not Add")
     return render(request, 'hod_template/add_students_template.html', context)
@@ -880,58 +812,6 @@ def delete_students(request, students_id):
 
 
 
-def manage_groupe(request): 
-    students = Students.objects.all()
-    context = {
-        'students': students,
-        'page_title': 'Manage Groupe'
-    }
-    return render(request, "hod_template/manage_groupe.html", context)
-
-
-
-def add_groupe(request):
-    if request.method == 'POST':
-        form = GroupeForm(request.POST)
-        if form.is_valid():
-            try:
-                form.save()
-                messages.success(request, "Successfully Added")
-                return redirect('manage_groupe')
-             
-            except Exception as e:
-                messages.error(request, "Could Not Add" + str(e))
-    else:
-        form = GroupeForm()
-    return render(request, 'hod_template/add_groupe_template.html', {'form': form})
-
- 
-def edit_groupe(request, groupe_id):
-    groupe = get_object_or_404(Groupe, id=groupe_id)
-    form = GroupeForm(request.POST or None, instance=groupe)
-    context = {
-        'form': form,
-        'groupe_id': groupe_id,
-        'page_title': 'Edit groupe'
-    }
-    # if request.method == 'POST':
-    #     if form.is_valid():
-    #         nom = form.cleaned_data.get('nom')
-    #         description = form.cleaned_data.get('description') 
-    #         try: 
-    #             students.nom = nom
-    #             students.description = description 
-    #             students.save()
-    #             messages.success(request, "Successfully Updated")
-    #             return redirect(reverse('manage_students'))
-    #         except Exception as e:
-    #             messages.error(request, "Could Not Update " + str(e))
-    #     else:
-    #         messages.error(request, "Please Fill Form Properly!")
-    # else:
-    return render(request, "hod_template/edit_groupe_template.html", context)
-
-
 def assign_project(request): 
     groupes = list(Groupe.objects.all())
     projets = list(Projet.objects.all())
@@ -947,4 +827,23 @@ def assign_project(request):
         groupe.projet = projets[i]
         groupe.save()
 
+    return render(request, "hod_template/manage_groupe.html", context)
+
+
+def assign_project_manytoone(request): 
+    groupes = Groupe.objects.all()
+    projets = Projet.objects.all()
+    students = Students.objects.all()
+    context = {
+        'students': students,
+        'page_title': 'Manage Groupe'
+    }
+
+    for groupe in groupes:
+        # Sélectionner un projet aléatoire
+        projet_aleatoire = random.choice(projets) 
+        
+        # Assigner le projet au groupe
+        groupe.projet = projet_aleatoire
+        groupe.save()
     return render(request, "hod_template/manage_groupe.html", context)
