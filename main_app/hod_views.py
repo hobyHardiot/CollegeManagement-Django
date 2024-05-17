@@ -742,36 +742,39 @@ def manage_students(request):
     return render(request, "hod_template/manage_students.html", context)
 
 
-def add_students(request):
-    form = StudentsForm(request.POST or None)
-    context = {
-        'form': form,
-        'page_title': 'Add students'
-    }
-    if request.method == 'POST':
-        if form.is_valid():
-            numMattr = form.cleaned_data.get('numMattr')
-            firstname = form.cleaned_data.get('firstname')
-            lastname = form.cleaned_data.get('lastname')
-            mobile_number = form.cleaned_data.get('mobile_number')
-            location = form.cleaned_data.get('location')
-            niveau = form.cleaned_data.get('niveau')
-            try:
-                students = Students()
-                students.numMattr = numMattr
-                students.firstname = firstname
-                students.lastname = lastname
-                students.mobile_number = mobile_number
-                students.location = location
-                students.niveau = niveau
-                students.save()
-                messages.success(request, "Successfully Added")
-                return redirect(reverse('manage_students'))
-            except Exception as e:
-                messages.error(request, "Could Not add " + str(e))
-        else:
-            messages.error(request, "Could Not Add")
-    return render(request, 'hod_template/add_students_template.html', context)
+      
+       
+def add_students(request): 
+    levels = Course.objects.all()
+    context = { 
+        'page_title': 'Add students',
+        'levels' : levels
+    }  
+    if request.method == 'POST':   
+        
+        numMattr = request.POST['numMattr']
+        firstname = request.POST['firstname']
+        lastname = request.POST['lastname']
+        mobile_number = request.POST['mobile_number']
+        location = request.POST['location']
+        niveau_id = request.POST['niveau'] 
+        try:
+            students = Students()
+            niveau = Course.objects.get(id=niveau_id)
+
+            students.numMattr = numMattr
+            students.firstname = firstname
+            students.lastname = lastname
+            students.mobile_number = mobile_number
+            students.location = location
+            students.niveau = niveau 
+            students.save()
+            print("Successfully Added")
+            return JsonResponse({'success': 'Added successfully'})
+        except Exception as e:
+            print(e)
+            return JsonResponse({'error': 'Une erreur est survenue'})    
+    return render(request, "hod_template/add_students_template.html", context)
 
 
 def edit_students(request, students_id):

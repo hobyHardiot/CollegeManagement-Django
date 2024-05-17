@@ -1,19 +1,24 @@
 {% extends 'main_app/base.html' %}
 {% load static %}
-{% block page_title %}{{page_title}}{% endblock page_title %}
+{% block title %}{{page_title}}{% endblock title %}
 
+{% block page_css %}
+  <style>
+    .rotate-chevron{ 
+      transform: rotate(-90deg);
+      transition-duration: .3s;
+      transition-property: -webkit-transform, transform;
+    }
+    #chevron {
+      /* Définissez la transition ici */
+      transition: transform 0.5s ease-in-out;
+  }
+  
+  </style>
+{% endblock page_css %}
 {% block content %}
 
-<section class="content">
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-md-12">
-                <div class="d-flex justify-content-end">
-                    <a href="{% url 'add_groupe' %}">
-                        <button class="btn btn-primary mb-3">Add groupe</button>
-                    </a>
-                </div>
-                <div class="d-flex justify-content-end">
+                {% comment %}  <div class="d-flex justify-content-end">
                     <a href="{% url 'assign_project' %}">
                         <button class="btn btn-primary mb-3">Assign project</button>
                     </a>
@@ -22,39 +27,340 @@
                     <a href="{% url 'assign_project_manytoone' %}">
                         <button class="btn btn-primary mb-3">Assign project 2</button>
                     </a>
-                </div> 
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">{{page_title}}</h3>
-                    </div>
-                    <!-- /.card-header -->
-                    <div class="card-body">
+                </div>   {% endcomment %}
 
-                        <table id="example2" class="table table-bordered table-hover">
-                            <thead class="thead-dark">
-                                <tr>
-                                    <th>Mattricule</th>
-                                    <th>Full Name</th>
-                                    <th>Groupe</th>
-                                    <th>Project</th>  
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for student in students %} 
-                                <tr> 
-                                    <td>{{student.numMattr}}</td>
-                                    <td>{{student.firstname}}, {{student.lastname}}</td>
-                                    <td>{{ student.groupe_set.first.numero }} </td> 
-                                    <td>{{ student.groupe_set.first.projet.nom }} </td> 
-                                </tr> 
-                                {% endfor %}
-                            </tbody>
-                        </table>
+ 
 
-                    </div>
+<div class="d-flex align-items-center justify-content-between">
+    <h4 class="py-3 mb-4">
+      <span class="text-muted fw-light">Groupe /</span> 
+    </h4> 
+</div>
+<div class="row g-4 mb-4">
+{% for prerequisGroupe in prerequisGroupes %}  
+    <div class="col-xl-4 col-lg-6 col-md-6">
+        <div class="card {% if prerequisGroupe.status  == -1 %}card-border-shadow-info {% elif prerequisGroupe.status  == 0 %} card-border-shadow-success {% elif prerequisGroupe.status  == 1 %} card-border-shadow-secondary{% endif %}">
+            <div class="card-header">
+            <div class="d-flex align-items-center">
+                <div class="d-flex align-items-start"> 
+                <div class="me-2">
+                    <h5 class="mb-1"><a href="javascript:;" id="open_modal_{{ prerequisGroupe.id }}" data-bs-toggle="modal" data-bs-target="#modal_{{ prerequisGroupe.id }}" class="h5 stretched-link" data-id="{{ prerequisGroupe.id }}">{{prerequisGroupe.module}}</a>
+                    </h5> 
                 </div>
+                </div> 
             </div>
+            </div>
+            <div class="card-body">
+            <div class="d-flex align-items-center flex-wrap">
+                <div class="bg-lighter p-2 rounded me-auto mb-3">
+                <h6 class="mb-1">{{ prerequisGroupe.niveau }}</h6> 
+                </div>
+                <div class="text-end mb-3">
+                <h6 class="mb-1">Start Date: <span class="text-body fw-normal">{{ prerequisGroupe.start_date  }}</span></h6>
+                <h6 class="mb-1">Deadline: <span class="text-body fw-normal">{{ prerequisGroupe.end_date }}</span></h6>
+                </div>
+            </div> 
+            <p class="mb-0">{{prerequisGroupe.description}}</p>
+            </div>
+            <div class="card-body border-top">
+            <div class="d-flex align-items-center">
+                <h6 class="mb-1">Status</h6>
+                {% if prerequisGroupe.status  == -1 %}
+                <span class="badge bg-label-info ms-auto d-flex align-items-center"><i class="bx bx-star me-2"></i>New</span>
+                {% elif prerequisGroupe.status  == 0 %}
+                <span class="badge bg-label-success ms-auto"><i class="bx bx-check-double me-2"></i>Completed</span>
+                {% elif prerequisGroupe.status  == 1 %}
+                <span class="badge bg-label-secondary ms-auto"><i class="bx bx-paper-plane me-2"></i>Delivred</span>
+                {% endif %}  
+            </div>  
+            </div>
+            
         </div>
     </div>
-</section>
-{% endblock content %}
+    <div class="modal fade mt-0" id="modal_{{ prerequisGroupe.id }}" data-bs-backdrop="static" tabindex="-1">
+      <div class="modal-dialog  modal-xl">
+        <div class="modal-content">
+          <div class="modal-header">
+            <div class="d-flex align-items-center justify-content-between w-100"> 
+              <h5 class="modal-title" id="backDropModalTitle">Groupe {{ prerequisGroupe.module }}</h5>  
+              {% comment %} <a href="{% url 'add_groupe' %}"> {% endcomment %}
+                <button class="btn btn-primary mb-3   collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePaymentMethod_{{ prerequisGroupe.id }}" aria-expanded="false" aria-controls="collapsePaymentMethod" data-newbtn-id="{{ prerequisGroupe.id }}" id="{{ prerequisGroupe.id }}">
+                  <span><i id="chevron_{{ prerequisGroupe.id }}" class="bx bx-chevron-left me-md-1"></i>
+                    <span class="d-md-inline-block d-none">New</span>
+                  </span>
+                </button>
+              {% comment %} </a>   {% endcomment %}
+            </div>
+            <button type="button" class="btn-close" style="position: absolute;right: 22px;top: 32px;" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div id="collapsePaymentMethod_{{ prerequisGroupe.id }}" class="accordion-collapse w-100 px-4 collapse" aria-labelledby="headingPaymentMethod" data-bs-parent="#collapsibleSection">  
+            <form method="POST" data-form-id="{{ prerequisGroupe.id }}" id="groupe-form_{{ prerequisGroupe.id }}"> 
+              {% csrf_token %}
+                <div class="d-flex justify-content-end gap-3">
+                  <div class="w-px-100">
+                    <div class="mb-3 form-control d-flex align-items-center bg-label-primary"> 
+                      <label>Groupe</label>
+                      <input name="numero" readonly type="text" id="groupe-numero-input_{{ prerequisGroupe.id }}"  style="outline:red;background:transparent;cursor:default" class="text-primary border-none w-px-20 text-center"     />
+                    </div>
+                  </div>
+                  <div class="w-50">
+                    <div class="mb-3">  
+                      <select class="select2 form-select" name="etudiants" multiple> 
+                        {% for etudiant in etudiants_sans_groupe %}
+                        <option value="{{etudiant.numMattr}}">{{etudiant.numMattr}} {{etudiant.firstname}} {{etudiant.lastname}}</option>   
+                        {% endfor %}  
+                      </select> 
+                    </div>
+                  </div> 
+                  <div class="">
+                    <button type="submit"  class="btn btn-primary"><i class="bx bx-plus"></i></button> 
+                  </div>
+                </div> 
+            </form> 
+          </div>
+          
+          <div class="modal-body">  
+            
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-label-secondary" data-bs-dismiss="modal">Close</button>
+            <button id="delivre-btn_{{ prerequisGroupe.id }}"  {% if prerequisGroupe.status  == 1 %} disabled {% endif %} data-bs-dismiss="modal" delivre-groupe-btn="{{ prerequisGroupe.id }}" class="btn btn-primary">
+              <span class="d-flex align-items-center justify-content-center text-nowrap"><i class="bx bx-paper-plane bx-xs me-1"></i>Delivre</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div> 
+    <input type="hidden" name="prerequisGroupe" value="{{prerequisGroupe.id}}"/>
+{% endfor %}
+</div>    
+
+ 
+{% endblock content %}  
+{% block page_js %}
+ <script> 
+  axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+  axios.defaults.xsrfCookieName = 'csrftoken'; 
+  $(document).ready(function () { 
+    var prerequisGroupeId;
+    $('[data-id]').click(function() 
+    { 
+      var groupId = $(this).data('id'); 
+      var idModal = "#modal_" + groupId;
+      prerequisGroupeId=groupId;
+      
+      loadModalData(idModal,"groupe/manage_2/"+groupId,{},function(){
+        {% comment %} alert("hello"); {% endcomment %}
+      })     
+      disableAddButton();
+    });
+
+    $('[data-newbtn-id]').one('click', function() 
+    { 
+      prerequisGroupeId = $(this).data('newbtn-id'); 
+      $('#collapsePaymentMethod_'+prerequisGroupeId).on('shown.bs.collapse', function () 
+      {  
+        $("#chevron_"+prerequisGroupeId).toggleClass("rotate-chevron");   
+      }); 
+      $('#collapsePaymentMethod_'+prerequisGroupeId).on('hidden.bs.collapse', function () 
+      {
+        $('#collapsePaymentMethod_'+prerequisGroupeId).collapse('hide');
+        $("#chevron_"+prerequisGroupeId).removeClass("rotate-chevron");  
+      });
+      automaticGroupeNumber();
+      modifieListSelect2();
+    }); 
+
+
+    $("[data-form-id]").submit(function(event) 
+    {
+      event.preventDefault(); 
+      var idModal = "#modal_" + prerequisGroupeId;
+      $.ajax({
+        url: "/groupe/manage_3/"+prerequisGroupeId,  
+        method: 'POST',
+        data: $(this).serialize(),  
+        success: function(response) { 
+          modifieListSelect2();
+					loadModalData(idModal,"groupe/manage_2/"+prerequisGroupeId,{},function(){  
+						automaticGroupeNumber();
+						$(".select2").val(null).trigger('change');
+            disableAddButton();
+					})   
+        },
+        error: function(xhr, status, error) { 
+            console.error(error);
+        }
+      });  
+      automaticGroupeNumber();  
+    }); 
+    $("[delivre-groupe-btn]").on('click', function() 
+    { 
+      var route = "logout_user/"
+      postData(route,{},function(response){ 
+        Swal.fire({
+          title: "Successfully",
+          // text: "You clicked the button!",
+          icon: "success",
+          customClass: {
+              confirmButton: "btn btn-primary"
+          },
+          buttonsStyling: false,
+          showConfirmButton: true,
+          preConfirm: () => {
+            // Ici, vous pouvez définir ce qui se passera lorsque l'utilisateur clique sur "OK".
+            // Par exemple, vous pouvez actualiser la page :
+            location.reload();
+          }
+        })
+      })
+    }); 
+
+    function verifierNumGroupe(groupes) {
+			if (!groupes || groupes.length === 0) {
+				return 1;
+			}
+		
+      groupes.sort((a, b) => a.numero - b.numero);
+      let dernierNumero = groupes[0].numero;
+      let prochainNumero = dernierNumero + 1;
+      let numero = "";
+
+      for (let i = 1; i < groupes.length; i++) {
+          let groupeActuel = groupes[i];
+          if (groupeActuel.numero!== prochainNumero) {
+              if (numero === "") {
+                  numero = "Il y a une lacune dans les numéros de groupe.";
+              } else {
+                  numero += ", et il y a une autre lacune.";
+              }
+              prochainNumero++;
+          } else {
+              prochainNumero++;
+          }
+      }
+
+      if (prochainNumero > groupes[groupes.length - 1].numero) {
+          numero += prochainNumero;
+      } 
+      return numero;
+    }
+    function automaticGroupeNumber(){
+      $.ajax({
+        url: '/groupe/manage_4/' + prerequisGroupeId , 
+        type: 'GET',
+        success: function(data) {  
+          var numero = verifierNumGroupe(data.groupes); 
+          console.log("Dispo= " + numero);
+          console.log("#groupe-numero-input_" + prerequisGroupeId);
+          $("#groupe-numero-input_" + prerequisGroupeId).prop('value', numero);
+
+        },
+        error: function(xhr, status, error) {
+            console.error("Erreur lors de la récupération des données:", error);
+        }
+      });
+    }
+
+    function modifieListSelect2(){
+      $.ajax({
+        url: '/groupe/manage', 
+        type: 'POST',
+        data: {
+          csrfmiddlewaretoken: '{{ csrf_token }}' ,
+          prerequisGroupe: prerequisGroupeId
+        },
+        success: function(data) {   
+          var etudiants_sans_groupe = data.etudiants_sans_groupe
+          console.log(etudiants_sans_groupe);    
+          var selectOptions = etudiants_sans_groupe.map(etudiant => `<option value="${etudiant.numMattr}">${etudiant.numMattr} ${etudiant.firstname} ${etudiant.lastname}</option>`).join('');
+
+          document.getElementById('groupe-form_' + prerequisGroupeId).innerHTML = `
+          <form method="POST" data-form-id="${prerequisGroupeId}" id="groupe-form_${prerequisGroupeId}">
+            {% csrf_token %}
+            <div class="d-flex justify-content-end gap-3">
+              <div class="w-px-100">
+                <div class="mb-3 form-control d-flex align-items-center bg-label-primary"> 
+                  <label>Groupe</label>
+                  <input name="numero" readonly type="text" id="groupe-numero-input_${prerequisGroupeId}" style="outline:red;background:transparent;cursor:default" class="text-primary border-none w-px-20 text-center" />
+                </div>
+              </div>
+              <div class="w-50">
+                <div class="mb-3">  
+                  <select class="select2 tanjemo form-select" name="etudiants" multiple> 
+                    ${selectOptions}
+                  </select> 
+                </div>
+              </div> 
+              <div class="">
+                <button type="submit" class="btn btn-primary"><i class="bx bx-plus"></i></button> 
+              </div>
+            </div> 
+          </form>
+        `; 
+        {% comment %} $('.select2').select2(); {% endcomment %}
+
+        },
+        error: function(xhr, status, error) {
+            console.error("Erreur lors de la récupération des données:", error);
+        }
+      });
+    }
+    function isAssignGroupCompleted(){
+      return new Promise((resolve, reject) => {
+        $.ajax({
+          url: '/groupe/manage', 
+          type: 'POST',
+          data: {
+            csrfmiddlewaretoken: '{{ csrf_token }}',
+            prerequisGroupe: prerequisGroupeId
+          },
+          success: function(data) {   
+            var etudiants_sans_groupe = data.etudiants_sans_groupe;
+            if (etudiants_sans_groupe.length === 0) {
+              resolve(true); 
+            } else {
+              resolve(false);  
+            }
+          },
+          error: function(xhr, status, error) {
+            console.error("Erreur lors de la récupération des données:", error);
+            reject(error); // Retourne une erreur si la requête échoue
+          }
+        });
+      });
+    }
+    
+    function disableAddButton(){
+      isAssignGroupCompleted().then(result => {
+        if(result) {
+          console.log("Complet");  
+          $('#'+prerequisGroupeId).prop('disabled', true);
+
+          if ($('#delivre-btn_'+prerequisGroupeId).prop('disabled')) {
+            console.log("Le bouton est déjà désactivé.");
+            var links = document.querySelectorAll('#modal_1 a');
+
+            // Applique le style à chaque élément
+            links.forEach(link => {
+                link.style.pointerEvents = 'none';
+                link.style.cursor = 'default';
+            });
+          } else { 
+            $('#delivre-btn_'+prerequisGroupeId).prop('disabled', false);
+            console.log("Le bouton a été activé.");
+          } 
+          $('#collapsePaymentMethod_'+prerequisGroupeId).collapse('hide');
+
+        }else{
+          console.log('mbola tsy complet');
+        }
+      }) 
+    }
+    
+  });
+    
+
+  
+</script>  
+{% endblock page_js %}

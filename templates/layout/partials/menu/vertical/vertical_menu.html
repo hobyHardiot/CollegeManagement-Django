@@ -1,0 +1,321 @@
+<aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
+  <!-- ! Hide app brand if navbar-full -->
+  {% if not navbar_full %}
+  <div class="app-brand demo">
+    <a href="{% url 'index' %}" class="app-brand-link">
+      <span class="app-brand-logo demo">
+        {% include 'partials/logo.html' with width=25 withbg="#696cff" %}
+      </span>
+      {% if request.user.user_type == '1' %}
+      <h6 class="app-brand-text mb-0 demo menu-text fs-3 fw-bold ms-2">Admin panel</h6>
+      {% elif request.user.user_type == '2' %}
+      <h6 class="app-brand-text mb-0 demo menu-text fs-3 fw-bold ms-2">Proff panel</h6>
+      {% else %} 
+      <h6 class="app-brand-text mb-0 demo menu-text fs-4 fw-bold ms-2">{{student.course}}<br>Deleguate panel</h6>
+      {% endif %}
+    </a>
+
+    <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto">
+      <i class="bx bx-chevron-left bx-sm align-middle"></i>
+    </a>
+  </div>
+  {% endif %}
+
+
+  <div class="menu-inner-shadow"></div>
+
+  <ul class="menu-inner py-1"> 
+  
+
+    {% if request.user.user_type == '1' %} 
+    {% url 'admin_home' as admin_home %}
+    <li class="menu-item  {% if admin_home == request.path %} active {% endif %}"> 
+      <a href="{{admin_home}}" class="menu-link">
+        <i class="menu-icon tf-icons bx bx-home-circle"></i>
+        <div class="text-truncate" data-i18n="Tables">Home</div>
+      </a>
+    </li> 
+    {% url 'admin_view_profile' as admin_view_profile %}
+    <li class="menu-item  {% if admin_view_profile == request.path %} active {% endif %}"> 
+      <a href="{{admin_view_profile}}" class="menu-link">
+        <i class="menu-icon tf-icons bx bx-home-circle"></i>
+        <div class="text-truncate" data-i18n="Tables">Update Profile</div>
+      </a>
+    </li> 
+    {% url 'manage_students' as manage_students %}
+    <li class="menu-item  {% if manage_students == request.path %} active {% endif %}"> 
+      <a href="{{manage_students}}" class="menu-link">
+        <i class="menu-icon tf-icons bx bx-home-circle"></i>
+        <div class="text-truncate" data-i18n="Tables">Student</div>
+      </a>
+    </li> 
+    {% url 'manage_staff' as manage_staff %}
+    <li class="menu-item  {% if manage_staff == request.path %} active {% endif %}"> 
+      <a href="{{manage_staff}}" class="menu-link">
+        <i class="menu-icon tf-icons bx bx-home-circle"></i>
+        <div class="text-truncate" data-i18n="Tables">Staff</div>
+      </a>
+    </li> 
+    {% url 'manage_student' as manage_student %}
+    <li class="menu-item  {% if manage_student == request.path %} active {% endif %}"> 
+      <a href="{{manage_student}}" class="menu-link">
+        <i class="menu-icon tf-icons bx bx-home-circle"></i>
+        <div class="text-truncate" data-i18n="Tables">Deleguate</div>
+      </a>
+    </li> 
+    {% url 'student_feedback_message' as student_feedback_message %}
+    <li class="menu-item  {% if student_feedback_message == request.path %} active {% endif %}"> 
+      <a href="{{student_feedback_message}}" class="menu-link">
+        <i class="menu-icon tf-icons bx bx-home-circle"></i>
+        <div class="text-truncate" data-i18n="Tables">Student Feedback</div>
+      </a>
+    </li> 
+    {% url 'staff_feedback_message' as staff_feedback_message %}
+    <li class="menu-item  {% if staff_feedback_message == request.path %} active {% endif %}"> 
+      <a href="{{staff_feedback_message}}" class="menu-link">
+        <i class="menu-icon tf-icons bx bx-home-circle"></i>
+        <div class="text-truncate" data-i18n="Tables">Staff Feedback</div>
+      </a>
+    </li> 
+
+    {% elif request.user.user_type == '2' %} 
+    {% url 'Deleguate_home' as staff_home %}
+    <li class="menu-item  {% if staff_home == request.path %} active {% endif %}"> 
+      <a href="{{staff_home}}" class="menu-link">
+        <i class="menu-icon tf-icons bx bx-home-circle"></i>
+        <div class="text-truncate" data-i18n="Tables">Home</div>
+      </a>
+    </li> 
+    {% url 'staff_view_profile' as staff_view_profile %}
+    <li class="menu-item  {% if staff_view_profile == request.path %} active {% endif %}"> 
+      <a href="{{staff_view_profile}}" class="menu-link">
+        <i class="menu-icon tf-icons bx bx-home-circle"></i>
+        <div class="text-truncate" data-i18n="Tables">Update Profile</div>
+      </a>
+    </li> 
+    {% url 'staff_view_groupe' as staff_view_groupe %}
+    <li class="menu-item  {% if staff_view_groupe == request.path %} active {% endif %}"> 
+      <a href="{{staff_view_groupe}}" class="menu-link">
+        <i class="menu-icon tf-icons bx bx-home-circle"></i>
+        <div class="text-truncate" data-i18n="Tables">Groupe</div>
+      </a>
+    </li> 
+    {% url 'manage_project' as manage_project %}
+    <li class="menu-item  {% if manage_project == request.path %} active {% endif %}"> 
+      <a href="{{manage_project}}" class="menu-link">
+        <i class="menu-icon tf-icons bx bx-home-circle"></i>
+        <div class="text-truncate" data-i18n="Tables">Project</div>
+      </a>
+    </li> 
+    {% url 'staff_feedback' as staff_feedback %}
+    <li class="menu-item  {% if staff_feedback == request.path %} active {% endif %}"> 
+      <a href="{{staff_feedback}}" class="menu-link">
+        <i class="menu-icon tf-icons bx bx-home-circle"></i>
+        <div class="text-truncate" data-i18n="Tables">Feedback</div>
+      </a>
+    </li> 
+    {% else %} 
+      {% url 'student_home' as student_home %}
+      <li class="menu-item  {% if student_home == request.path %} active {% endif %}"> 
+        <a href="{{student_home}}" class="menu-link">
+          <i class="menu-icon tf-icons bx bx-home-circle"></i>
+          <div class="text-truncate" data-i18n="Tables">Home</div>
+        </a>
+      </li> 
+      {% url 'student_view_profile' as student_view_profile %}
+      <li class="menu-item  {% if student_view_profile == request.path %} active {% endif %}"> 
+        <a href="{{student_view_profile}}" class="menu-link">
+          <i class="menu-icon tf-icons bx bx-table"></i>
+          <div class="text-truncate" data-i18n="Tables">Update Profile</div>
+        </a>
+      </li> 
+      {% url 'view_students' as view_students %}
+      <li class="menu-item  {% if view_students == request.path %} active {% endif %}"> 
+        <a href="{{view_students}}" class="menu-link">
+          <i class="menu-icon tf-icons bx bx-table"></i>
+          <div class="text-truncate" data-i18n="Tables">Student</div>
+        </a>
+      </li> 
+      {% url 'manage_groupe' as manage_groupe %}
+      <li class="menu-item  {% if manage_groupe == request.path %} active {% endif %}"> 
+        <a href="{{manage_groupe}}" class="menu-link">
+          <i class="menu-icon tf-icons bx bx-table"></i>
+          <div class="text-truncate" data-i18n="Tables">Groupe</div>
+        </a>
+      </li> 
+      {% url 'student_feedback' as student_feedback %}
+      <li class="menu-item  {% if student_feedback == request.path %} active {% endif %}"> 
+        <a href="{{student_feedback}}" class="menu-link">
+          <i class="menu-icon tf-icons bx bx-table"></i>
+          <div class="text-truncate" data-i18n="Tables">Feedback</div>
+        </a>
+      </li> 
+    {% endif %}
+ 
+    {% comment %} <!-- Account -->
+    <li class="menu-item {% if '/account_settings/' in request.path %}active open{% endif %}">
+      <a href="javascript:void(0);" class="menu-link menu-toggle">
+        <i class="menu-icon tf-icons bx bx-dock-top"></i>
+        <div class="text-truncate" data-i18n="Account Settings">Account Settings</div>
+      </a>
+      <ul class="menu-sub">
+        <li class="menu-item {% if '/account/' in request.path %}active{% endif %}">
+          <a href="{% url 'pages-account-settings-account' %}" class="menu-link">
+            <div class="text-truncate" data-i18n="Account">Account</div>
+          </a>
+        </li> 
+      </ul>
+    </li>
+    <!-- Auth -->
+    <li class="menu-item {% if '/auth/' in request.path %}active open{% endif %}">
+      <a href="javascript:void(0);" class="menu-link menu-toggle">
+        <i class="menu-icon tf-icons bx bx-lock-open-alt"></i>
+        <div class="text-truncate" data-i18n="Authentications">Authentications</div>
+      </a>
+      <ul class="menu-sub">
+        <li class="menu-item {% if '/login/' in request.path %}active{% endif %}">
+          <a href="{% url 'auth-login-basic' %}" class="menu-link" target="_blank">
+            <div class="text-truncate" data-i18n="Login">Login</div>
+          </a>
+        </li> 
+      </ul>
+    </li> 
+ 
+    <!-- UI -->
+    <li class="menu-item {% if '/ui/' in request.path %}active open{% endif %}">
+      <a href=" javascript:void(0)" class="menu-link menu-toggle">
+        <i class="menu-icon tf-icons bx bx-box"></i>
+        <div class="text-truncate" data-i18n="User interface">User interface</div>
+      </a>
+      <ul class="menu-sub">
+        <li class="menu-item {% if '/accordion/' in request.path %}active{% endif %}">
+          <a href="{% url 'ui-accordion' %}" class="menu-link">
+            <div class="text-truncate" data-i18n="Accordion">Accordion</div>
+          </a>
+        </li>
+        <li class="menu-item {% if '/alerts/' in request.path %}active{% endif %}">
+          <a href="{% url 'ui-alerts' %}" class="menu-link">
+            <div class="text-truncate" data-i18n="Alerts">Alerts</div>
+          </a>
+        </li>
+        <li class="menu-item {% if '/badges/' in request.path %}active{% endif %}">
+          <a href="{% url 'ui-badges' %}" class="menu-link">
+            <div class="text-truncate" data-i18n="Badges">Badges</div>
+          </a>
+        </li>
+        <li class="menu-item {% if '/buttons/' in request.path %}active{% endif %}">
+          <a href="{% url 'ui-buttons' %}" class="menu-link">
+            <div class="text-truncate" data-i18n="Buttons">Buttons</div>
+          </a>
+        </li>
+        <li class="menu-item {% if '/carousel/' in request.path %}active{% endif %}">
+          <a href="{% url 'ui-carousel' %}" class="menu-link">
+            <div class="text-truncate" data-i18n="Carousel">Carousel</div>
+          </a>
+        </li>
+        <li class="menu-item {% if '/collapse/' in request.path %}active{% endif %}">
+          <a href="{% url 'ui-collapse' %}" class="menu-link">
+            <div class="text-truncate" data-i18n="Collapse">Collapse</div>
+          </a>
+        </li>
+        <li class="menu-item {% if '/dropdowns/' in request.path %}active{% endif %}">
+          <a href="{% url 'ui-dropdowns' %}" class="menu-link">
+            <div class="text-truncate" data-i18n="Dropdowns">Dropdowns</div>
+          </a>
+        </li>
+        <li class="menu-item {% if '/footer/' in request.path %}active{% endif %}">
+          <a href="{% url 'ui-footer' %}" class="menu-link">
+            <div class="text-truncate" data-i18n="Footer">Footer</div>
+          </a>
+        </li>
+        <li class="menu-item {% if '/list_groups/' in request.path %}active{% endif %}">
+          <a href="{% url 'ui-list-groups' %}" class="menu-link">
+            <div class="text-truncate" data-i18n="List Groups">List groups</div>
+          </a>
+        </li>
+        <li class="menu-item {% if '/modals/' in request.path %}active{% endif %}">
+          <a href="{% url 'ui-modals' %}" class="menu-link">
+            <div class="text-truncate" data-i18n="Modals">Modals</div>
+          </a>
+        </li>
+        <li class="menu-item {% if '/navbar/' in request.path %}active{% endif %}">
+          <a href="{% url 'ui-navbar' %}" class="menu-link">
+            <div class="text-truncate" data-i18n="Navbar">Navbar</div>
+          </a>
+        </li>
+        <li class="menu-item {% if '/offcanvas/' in request.path %}active{% endif %}">
+          <a href="{% url 'ui-offcanvas' %}" class="menu-link">
+            <div class="text-truncate" data-i18n="Offcanvas">Offcanvas</div>
+          </a>
+        </li>
+        <li class="menu-item {% if '/pagination_breadcrumbs/' in request.path %}active{% endif %}">
+          <a href="{% url 'ui-pagination-breadcrumbs' %}" class="menu-link">
+            <div class="text-truncate" data-i18n="Pagination &amp; Breadcrumbs">Pagination &amp; Breadcrumbs</div>
+          </a>
+        </li>
+        <li class="menu-item {% if '/progress/' in request.path %}active{% endif %}">
+          <a href="{% url 'ui-progress' %}" class="menu-link">
+            <div class="text-truncate" data-i18n="Progress">Progress</div>
+          </a>
+        </li>
+        <li class="menu-item {% if '/spinners/' in request.path %}active{% endif %}">
+          <a href="{% url 'ui-spinners' %}" class="menu-link">
+            <div class="text-truncate" data-i18n="Spinners">Spinners</div>
+          </a>
+        </li>
+        <li class="menu-item {% if '/tabs_pills/' in request.path %}active{% endif %}">
+          <a href="{% url 'ui-tabs-pills' %}" class="menu-link">
+            <div class="text-truncate" data-i18n="Tabs &amp; Pills">Tabs &amp; Pills</div>
+          </a>
+        </li>
+        <li class="menu-item {% if '/toasts/' in request.path %}active{% endif %}">
+          <a href="{% url 'ui-toasts' %}" class="menu-link">
+            <div class="text-truncate" data-i18n="Toasts">Toasts</div>
+          </a>
+        </li>
+        <li class="menu-item {% if '/tooltips_popovers/' in request.path %}active{% endif %}">
+          <a href="{% url 'ui-tooltips-popovers' %}" class="menu-link">
+            <div class="text-truncate" data-i18n="Tooltips & Popovers">Tooltips &amp; popovers</div>
+          </a>
+        </li>
+        <li class="menu-item {% if '/typography/' in request.path %}active{% endif %}">
+          <a href="{% url 'ui-typography' %}" class="menu-link">
+            <div class="text-truncate" data-i18n="Typography">Typography</div>
+          </a>
+        </li>
+      </ul>
+    </li>  
+
+    <!-- Form -->
+    <li class="menu-item {% if '/forms/' in request.path %}active open{% endif %}">
+      <a href="javascript:void(0)" class="menu-link menu-toggle">
+        <i class="menu-icon tf-icons bx bx-detail"></i>
+        <div class="text-truncate" data-i18n="Form Elements">Form Elements</div>
+      </a>
+      <ul class="menu-sub">
+        <li class="menu-item {% if '/basic_inputs/' in request.path %}active{% endif %}">
+          <a href="{% url 'forms-basic-inputs' %}" class="menu-link">
+            <div class="text-truncate" data-i18n="Basic Inputs">Basic Inputs</div>
+          </a>
+        </li>
+        <li class="menu-item {% if '/input_groups/' in request.path %}active{% endif %}">
+          <a href="{% url 'forms-input-groups' %}" class="menu-link">
+            <div class="text-truncate" data-i18n="Input groups">Input groups</div>
+          </a>
+        </li>
+      </ul>
+    </li>
+ 
+
+    <li class="menu-item {% if '/tables/basic/' in request.path %}active{% endif %}">
+      <a href="{% url 'tables-basic' %}" class="menu-link">
+        <i class="menu-icon tf-icons bx bx-table"></i>
+        <div class="text-truncate" data-i18n="Tables">Tables</div>
+      </a>
+    </li>  {% endcomment %}
+ 
+
+  </ul>
+
+
+</aside>

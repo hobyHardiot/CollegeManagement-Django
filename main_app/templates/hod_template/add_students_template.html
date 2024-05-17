@@ -1,72 +1,61 @@
-{% extends 'main_app/base.html' %}
-{% load static %}
-{% block custom_css %}
-  <style>
-      .invalid{
-        font-style: italic;
-        font-weight: bold;
-        color: red;
-      }
-      .valid{
-        font-style: italic;
-        font-weight: bold;
-        color: green;
-      }
-  </style>
-{% endblock custom_css %}
-{% block page_title %}{{page_title}}{% endblock page_title %}
-
-{% block content %}
-
-<section class="content">
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-md-12">
-                <!-- general form elements -->
-                <div class="card card-dark">
-                    <div class="card-header">
-                        <h3 class="card-title">{{page_title}}</h3>
-                    </div>
-
-                    {% include "main_app/form_template.html" with messages=messages  form=form button_text="Add Student"%}
-                </div>
-                <!-- /.card -->
-
-            </div>
-        </div>
+<form class="row g-3" id="add-student-form" method="POST">
+  {% csrf_token %}
+    <div class="col-12 col-md-6 mb-3 form-floating">
+      <input required name="numMattr" type="text" class="form-control" id="numMattr" placeholder="364 H-TOL" aria-describedby="floatingInputHelp">
+      <label for="numMattr">Mattricule</label> 
     </div>
-</section>
-{% endblock content %}
-{% block custom_js %}
-<script>
-    function validateEmail(email) {
-        const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-        return re.test(String(email).toLowerCase());
-    }
-    $(document).ready(function(){
-        $("#id_email").keyup(function(){
-            
-            var email = $(this).val()
-            if (validateEmail(email)){
-            $.ajax({
-                url: "{% url 'check_email_availability' %}",
-                type: 'POST',
-                data:{email:email}
-            }).done(function(response){
-                if (response == "True"){
-                    $(".email_error").remove()
-                    $("<span class='invalid email_error'>Email Address Already Exist</span>").insertAfter("#id_email");
-                }
-                else{
-                    $(".email_error").remove()
+    <div class="col-12 col-md-6"> 
+      <select id="modalEditUserStatus" name="niveau" style="height:58px" class="form-select" aria-label="Default select example"> 
+        {% for level in levels %}
+          <option value="{{ forloop.counter }}">{{level.name}}</option> 
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-12 col-md-6 mb-3 form-floating">
+      <input required name="firstname" type="text" class="form-control" id="firstname" placeholder="RAKOTONDRALAMBO" aria-describedby="floatingInputHelp">
+      <label for="firstname">Firstname</label> 
+    </div>
+    <div class="col-12 col-md-6 mb-3 form-floating">
+      <input required name="lastname" type="text" class="form-control" id="lastname" placeholder="John Doe" aria-describedby="floatingInputHelp">
+      <label for="lastname">Lastname</label> 
+    </div>   
+    <div class="col-12 col-md-6">
+      <label class="form-label" for="mobile_number">Phone Number</label>
+      <div class="input-group input-group-merge"> 
+        <input required type="text" id="mobile_number" name="mobile_number" class="form-control phone-number-mask" placeholder="0343033643" />
+      </div>
+    </div> 
+    <div class="col-12 col-md-6">
+      <label class="form-label" for="location">Adress</label>
+      <input required type="text" id="location" name="location" class="form-control modal-edit-tax-id" placeholder="Maninday" />
+    </div>
+    <div class="modal-footer pb-0 px-0">
+      <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+      <button type="submit"   class="btn btn-primary">Save changes</button>
+    </div>
+  </form>
+  <script>
 
-                    $("<span class='valid email_error'>Email Address Available</span>").insertAfter("#id_email");
-                }
-            }).fail(function(response){
-                $("<span class='alert alert-warning'>Server Could Not Process This</span>").insertAfter("#id_email");
-            })
+    $("#add-student-form").submit(function(event) 
+    {
+      event.preventDefault();  
+      var formData = $(this).serialize(); 
+      $.ajax({
+        url: '/students/add' , 
+        type: 'POST',
+        data: formData + '&csrfmiddlewaretoken=' + '{{ csrf_token }}',  
+        success: function(responseData) {    
+          if (responseData.success) {
+            $('#success-toasts').toast('show'); 
+            $('#addModal').modal('hide'); 
+            location.reload();
+          } else {
+            $('#error-toasts').toast('show');
+          }
+        },
+        error: function(data) {
+          console.log("data");
         }
-        })
-    });
-</script>
-{% endblock custom_js %}
+      });
+    }); 
+  </script>

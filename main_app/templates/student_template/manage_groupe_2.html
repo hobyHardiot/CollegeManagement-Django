@@ -1,0 +1,61 @@
+ 
+{% comment %} <div class="modal-body">  {% endcomment %}
+  <div class="col-md-12">
+    <div class="card mb-3 border shadow-none">
+      <div class="table-responsive text-nowrap rounded">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Mattricule</th>
+              <th>Full name</th>
+              <th class="text-center">Groupe</th>
+              <th class="text-center">#</th>
+            </tr>
+          </thead>
+          <tbody> 
+            {% for groupe in groupes %}
+            <tr>
+                <td>
+                    {% for etudiant in groupe.etudiants.all %}
+                        {{ etudiant.numMattr }}<br>
+                    {% endfor %}
+                </td>
+                <td>
+                    {% for etudiant in groupe.etudiants.all %}
+                        {{ etudiant.firstname }} {{ etudiant.lastname }}<br>
+                    {% endfor %}
+                </td>
+                <td class="text-center">{{ groupe.numero }}</td>
+                <td align="center">
+                    {% comment %}style="pointer-events: none;cursor: default;" <a href="#" data-edit-id="{{groupe.id}}"> {% endcomment %}
+                    <a  href="{% url 'edit_groupe' groupe.id %}">
+                      <i class="bx bx-edit-alt me-1"></i>
+                    </a> 
+                </td> 
+            </tr>
+            {% endfor %}
+            <!-- Pour les étudiants sans groupe -->
+            {% for etudiant in etudiants_sans_groupe %}
+            <tr>
+                <td >
+                    {{ etudiant.numMattr }}
+                </td>
+                <td >
+                    {{ etudiant.firstname }} {{ etudiant.lastname }}
+                </td>
+                <td></td>
+                <td></td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+  </div> 
+{% comment %} </div>  {% endcomment %}
+<script>
+
+  $("[data-edit-id]").click(function(event) 
+  {
+ 
+  }); 
+</script>

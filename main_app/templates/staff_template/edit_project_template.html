@@ -4,21 +4,15 @@
 
 {% block content %}
 
-<section class="content">
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-md-12">
-                <!-- general form elements -->
-                <div class="card card-dark">
-                    <div class="card-header">
-                        <h3 class="card-title">{{page_title}}</h3>
-                    </div>
-                    {% include "main_app/form_template.html" with messages=messages  form=form button_text="Update Student"%}
-                </div>
-                <!-- /.card -->
-
-            </div>
-        </div>
-    </div>
-</section>
+<h4 class="py-3 mb-4">
+    <span class="text-muted fw-light">Projects /</span> Edit
+</h4> 
+<div class="card">
+    <div class="d-flex justify-content-between align-items-center">
+      <h5 class="card-header">{{page_title}}</h5>
+      <div class="d-flex justify-content-end"> 
+      </div>
+    </div> 
+    {% include "main_app/form_template.html" with messages=messages  form=form button_text="Update project"%}
+</div>
 {% endblock content %}

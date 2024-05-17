@@ -78,11 +78,7 @@ class AdminForm(CustomUserForm):
 class StaffForm(CustomUserForm):
     def __init__(self, *args, **kwargs):
         super(StaffForm, self).__init__(*args, **kwargs)
-
-    class Meta(CustomUserForm.Meta):
-        model = Staff
-        fields = CustomUserForm.Meta.fields + \
-            ['course' ]
+ 
 
 
 class CourseForm(FormSettings):
@@ -219,9 +215,9 @@ class Select2MultipleWidgetCustom(Select2MultipleWidget):
         attrs.setdefault('data-width', '100%')
         return attrs
 
-class GroupeForm(forms.ModelForm):
+class GroupeForm(forms.ModelForm):  
     etudiants = forms.ModelMultipleChoiceField(
-        queryset=Students.objects.all(),
+        queryset=Students.objects.filter(niveau = 3),
         widget=Select2MultipleWidgetCustom(attrs={'class': 'select2'}),
     )
 
@@ -237,4 +233,8 @@ class PrerequisGroupeForm(FormSettings):
 
     class Meta:
         model = PrerequisGroupe
-        fields = ['module','niveau','delais']
+        fields = ['module','niveau','start_date','end_date','description']
+        widgets = {
+            'start_date': DateInput(attrs={'type': 'date'}),
+            'end_date': DateInput(attrs={'type': 'date'}),
+        }

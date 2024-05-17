@@ -3,8 +3,8 @@ import math
 from datetime import datetime
 
 from django.contrib import messages
-from django.core.files.storage import FileSystemStorage
-from django.http import HttpResponse, JsonResponse
+from django.core.files.storage import FileSystemStorage 
+from django.forms import ValidationError
 from django.shortcuts import (HttpResponseRedirect, get_object_or_404,
                               redirect, render)
 from django.urls import reverse
@@ -12,9 +12,9 @@ from django.views.decorators.csrf import csrf_exempt
 
 from .forms import *
 from .models import *
+from django.http import HttpResponse, JsonResponse
 
-
-def student_home(request):
+def student_home(request): 
     student = get_object_or_404(Student, admin=request.user)
     total_subject = Subject.objects.filter(course=student.course).count()
     total_attendance = AttendanceReport.objects.filter(student=student).count()
@@ -47,6 +47,7 @@ def student_home(request):
         'data_absent': data_absent,
         'data_name': subject_name,
         'page_title': 'Student Homepage',
+        'student':student
 
     }
     return render(request, 'student_template/home_content.html', context)
@@ -59,7 +60,8 @@ def student_feedback(request):
     context = {
         'form': form,
         'feedbacks': FeedbackStudent.objects.filter(student=student),
-        'page_title': 'Student Feedback'
+        'page_title': 'Student Feedback',
+        'student':student
 
     }
     if request.method == 'POST':
@@ -83,7 +85,8 @@ def student_view_profile(request):
     form = StudentEditForm(request.POST or None, request.FILES or None,
                            instance=student)
     context = {'form': form,
-               'page_title': 'View/Edit Profile'
+               'page_title': 'View/Edit Profile',
+               'student':student
                }
     if request.method == 'POST':
         try:
@@ -134,36 +137,128 @@ def student_fcmtoken(request):
 ####
 
 def view_students(request): 
-    students = Students.objects.all()
+    student = get_object_or_404(Student, admin=request.user)
+    students = Students.objects.filter(niveau=student.course)
     context = {
         'students': students,
-        'page_title': 'View students'
+        'page_title': 'View students',
+        'student':student
     }
     return render(request, "student_template/view_students.html", context)
 
 
 
 def manage_groupe(request): 
-    students = Students.objects.all()
+    student = get_object_or_404(Student, admin=request.user)  
+
+    prerequis_id = 1
+    if request.method == 'POST':
+        prerequis_id = int(request.POST.get('prerequisGroupe'))
+        print(prerequis_id)
+        etudiants_sans_groupe = Students.objects.filter(niveau=student.course).exclude(groupeetudiant__prerequisGroupe=prerequis_id)
+        etudiants_sans_groupe_list = list(etudiants_sans_groupe.values()) 
+        return JsonResponse({'etudiants_sans_groupe': etudiants_sans_groupe_list})
+        
+
+    prerequisGroupes = PrerequisGroupe.objects.all()
+    students = Students.objects.filter(niveau=student.course)   
+    etudiants_sans_groupe = Students.objects.filter(niveau=student.course).exclude(groupeetudiant__prerequisGroupe=prerequis_id)
+   
+        
     context = {
         'students': students,
-        'page_title': 'Manage Groupe'
+        'page_title': 'Manage Groupe',
+        'student':student,  
+        'etudiants_sans_groupe': etudiants_sans_groupe, 
+
+        'prerequisGroupes': prerequisGroupes,
     }
     return render(request, "student_template/manage_groupe.html", context)
 
+def show_groupe_by_prerequisId(request, prerequisGroupe_id):
+    student = get_object_or_404(Student, admin=request.user) 
 
+
+    etudiants_sans_groupe = Students.objects.filter(niveau=student.course).exclude(groupeetudiant__prerequisGroupe=prerequisGroupe_id)
+
+    groupes = Groupe.objects.filter(niveau = student.course, prerequisGroupe = prerequisGroupe_id)
+    context = {
+        'groupes':groupes,
+        'etudiants_sans_groupe': etudiants_sans_groupe, 
+    }
+    return render(request, "student_template/manage_groupe_2.html",context)
+
+def manage_groupe_form(request, prerequisGroupe_id):
+    student = get_object_or_404(Student, admin=request.user) 
+
+    etudiants_sans_groupe = Students.objects.filter(niveau=student.course).exclude(groupeetudiant__prerequisGroupe=prerequisGroupe_id)
+    etudiants_sans_groupe_list = list(etudiants_sans_groupe.values()) 
+    
+    context = { 
+        'etudiants_sans_groupe': etudiants_sans_groupe_list, 
+    }
+    if request.method == 'POST':  
+        numero = request.POST['numero']
+        niveau = student.course
+        prerequisGroupe_id = int(prerequisGroupe_id)
+        etudiants = request.POST.getlist('etudiants')
+        try:   
+            prerequisGroupe_instance = get_object_or_404(PrerequisGroupe, id=prerequisGroupe_id)
+
+            groupe = Groupe(numero=numero, niveau=niveau, prerequisGroupe=prerequisGroupe_instance)
+            groupe.save()
+ 
+            for etudiant_id in etudiants:
+                etudiant = get_object_or_404(Students, numMattr=etudiant_id)
+                try:
+                    groupe_etudiant = GroupeEtudiant(groupe=groupe, etudiant=etudiant, prerequisGroupe=prerequisGroupe_instance)
+                    groupe_etudiant.save()
+                    print(etudiant)    
+                except Exception as e: 
+                    print("erreur" + e) 
+                
+            return JsonResponse(context)
+        except Exception as e:
+            print("Could Not Add" + str(e)) 
+            return JsonResponse({'error': 'Une erreur est survenue'}, status=500)
+    else: 
+        return JsonResponse(context)
+
+def getGroupeByPrerequisId(request, prerequisGroupe_id):
+    student = get_object_or_404(Student, admin=request.user) 
+
+    etudiants_sans_groupe = Students.objects.filter(niveau=student.course).exclude(groupeetudiant__prerequisGroupe=prerequisGroupe_id)
+
+    groupes = Groupe.objects.filter(niveau = student.course, prerequisGroupe = prerequisGroupe_id)
+    
+    etudiants_sans_groupe_list = list(etudiants_sans_groupe.values())
+    groupes_list = list(groupes.values())
+    
+    context = {
+        'groupes': groupes_list,
+        'etudiants_sans_groupe': etudiants_sans_groupe_list, 
+    }
+    return JsonResponse(context)
 
 def add_groupe(request):
-    if request.method == 'POST':
-        form = GroupeForm(request.POST)
+    connected_student = get_object_or_404(Student, admin=request.user)  
+    form = GroupeForm(request.POST or None)
+    if request.method == 'POST': 
         if form.is_valid():
-            try:
-                form.save()
+            try: 
+                groupe = Groupe()
+                groupe.numero = form.cleaned_data.get('numero')
+                groupe.niveau = connected_student.course
+                groupe.save()
+
+                etudiants_ids = form.cleaned_data.get('etudiants')
+                groupe.etudiants.set(etudiants_ids) 
+
                 messages.success(request, "Successfully Added")
                 return redirect('manage_groupe')
              
             except Exception as e:
-                messages.error(request, "Could Not Add" + str(e))
+                print("Could Not Add" + str(e))
     else:
         form = GroupeForm()
     return render(request, 'student_template/add_groupe_template.html', {'form': form})
@@ -177,19 +272,34 @@ def edit_groupe(request, groupe_id):
         'groupe_id': groupe_id,
         'page_title': 'Edit groupe'
     }
-    # if request.method == 'POST':
-    #     if form.is_valid():
-    #         nom = form.cleaned_data.get('nom')
-    #         description = form.cleaned_data.get('description') 
-    #         try: 
-    #             students.nom = nom
-    #             students.description = description 
-    #             students.save()
-    #             messages.success(request, "Successfully Updated")
-    #             return redirect(reverse('manage_students'))
-    #         except Exception as e:
-    #             messages.error(request, "Could Not Update " + str(e))
-    #     else:
-    #         messages.error(request, "Please Fill Form Properly!")
-    # else:
-    return render(request, "student_template/edit_groupe_template.html", context)
+    if request.method == 'POST':
+        if form.is_valid(): 
+
+            try:  
+                groupe.numero = form.cleaned_data.get('numero') 
+                groupe.save()
+
+
+                etudiants_ids = form.cleaned_data.get('etudiants')
+                groupe.etudiants.set(etudiants_ids) 
+
+                messages.success(request, "Successfully Updated")
+                return redirect(reverse('manage_groupe'))
+            except Exception as e:
+                messages.error(request, "Could Not Update " + str(e))
+        else:
+            messages.error(request, "Please Fill Form Properly!")
+    else:
+        return render(request, "student_template/edit_groupe_template.html", context)
+
+def delivre_groupe(request, prerequisGroupe_id): 
+    student = get_object_or_404(Student, admin=request.user)  
+
+    prerequisGroupe = get_object_or_404(PrerequisGroupe, id=prerequisGroupe_id) 
+ 
+    if request.method == 'POST':   
+        prerequisGroupe.status = 1 
+        prerequisGroupe.save()
+        return JsonResponse({'message': 'Saved'}) 
+    
+    return JsonResponse({'message': 'No modification'}) 

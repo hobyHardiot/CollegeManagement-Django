@@ -1,51 +1,125 @@
 {% extends 'main_app/base.html' %}
 {% load static %}
-{% block page_title %}{{page_title}}{% endblock page_title %}
+{% block title %}{{page_title}}{% endblock title %}
 
 {% block content %}
 
-<section class="content">
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-md-12">
-                <div class="d-flex justify-content-end">
-                    <a href="{% url 'add_project' %}">
-                        <button class="btn btn-primary mb-3">Add</button>
-                    </a>
+  <h4 class="py-3 mb-4">
+    <span class="text-muted fw-light">Projects /</span> Manage
+  </h4>
+  <!-- Basic Bootstrap Table -->
+  <div class="card">
+    <div class="d-flex justify-content-between align-items-center">
+      <h5 class="card-header">{{page_title}}</h5>
+      <div class="d-flex justify-content-end">
+       
+          {% comment %} <a href=" {% url 'add_project' %}"> Add
+          </a> {% endcomment %}
+          <button id="addBtn" class="btn btn-secondary create-new btn-primary mx-3" tabindex="0" aria-controls="DataTables_Table_0" type="button"  data-bs-toggle="modal" data-bs-target="#addModal">
+            <span>
+              <i class="bx bx-plus me-sm-1"></i> 
+              <span class="d-none d-sm-inline-block">Add</span>
+            </span>
+          </button>   
+          <div class="modal fade" id="addModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-md" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLabel2">Add project</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">{{page_title}}</h3>
-                    </div>
-                    <!-- /.card-header -->
-                    <div class="card-body">
-                        <table id="example2" class="table table-bordered table-hover">
-                            <thead class="thead-dark">
-                                <tr>
-                                    <th>#</th>
-                                    <th>Title</th>
-                                    <th>Description</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for project in projects %}
-                                <tr>
-                                    <td>{{ forloop.counter }}</td>
-                                    <td>{{project.nom}}</td>
-                                    <td>{{project.description}}</td>
-                                    <td>
-                                       <a href="{% url 'edit_project' project.id %}" class="btn btn-info">Edit</a> -
-                                        <a href="{% url 'delete_project' project.id %}" onclick="return confirm('Are you sure you want to delete this project ?')" class="btn btn-danger">Delete</a> 
-                                    </td>  
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+                <div class="modal-body">  
+
+                </div> 
+              </div>
             </div>
-        </div>
+          </div> 
+      </div>
     </div>
-</section>
-{% endblock content %}
+    <div class="table-responsive text-nowrap">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Title</th>
+            <th>Description</th>
+            <th class="text-end">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="table-border-bottom-0">
+          {% for project in projects %}
+          <tr>
+              <td>{{ forloop.counter }}</td>
+              <td>{{project.nom}}</td>
+              <td>{{project.description}}</td>
+              <td align="right">
+                  <a href="{% url 'edit_project' project.id %}">
+                    <i class="bx bx-edit-alt me-1"></i>
+                  </a>
+                  <a data-delete-id="{{project.id}}" href="javascript:void(0)">
+                    <i class="bx bx-trash me-2"></i>
+                  </a> 
+              </td>  
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div id="success-toasts" class="bs-toast toast toast-ex animate__animated my-2   bg-success" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="2000">
+    <div class="toast-header">
+      <i class="bx bx-check me-2"></i>
+      <div class="me-auto fw-medium">Success</div>
+      <small>now</small>
+      <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+    <div class="toast-body">
+      Added successfully
+    </div>
+  </div>
+  <div id="error-toasts" class="bs-toast toast toast-ex animate__animated my-2   bg-danger" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="2000">
+    <div class="toast-header">
+      <i class="bx bx-error-alt me-2"></i>
+      <div class="me-auto fw-medium">Error</div>
+      <small>now</small>
+      <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+    <div class="toast-body">
+      Error
+    </div>
+  </div>
+  {% comment %} {% url 'delete_project' project.id %} {% endcomment %}
+{% endblock content %}  
+
+{% block page_js %}
+ <script> 
+  $(document).ready(function () { 
+    $("#addBtn").click(function(){  
+      loadModalData("#addModal","{% url 'add_project' %}",{},{},{})
+    })
+    $('[data-delete-id]').click(function(){    
+      var projectId = $(this).data('delete-id'); 
+      postData("staff/project/delete/"+projectId,{},function(response){ 
+        Swal.fire({
+          title: "Successfully",
+          // text: "You clicked the button!",
+          icon: "success",
+          customClass: {
+              confirmButton: "btn btn-primary"
+          },
+          buttonsStyling: false,
+          showConfirmButton: true,
+          preConfirm: () => {
+            // Ici, vous pouvez définir ce qui se passera lorsque l'utilisateur clique sur "OK".
+            // Par exemple, vous pouvez actualiser la page :
+            location.reload();
+          }
+        })
+      })
+    })
+  });
+</script>  
+{% endblock page_js %}
+
+ 

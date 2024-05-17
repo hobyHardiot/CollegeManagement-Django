@@ -1,0 +1,117 @@
+{% load i18n %}
+{% load static %}
+
+
+<nav class="layout-navbar {{container_class}} navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme" id="layout-navbar">
+  {% if not navbar_hide_toggle %}
+  <div class="layout-menu-toggle navbar-nav align-items-xl-center me-3 me-xl-0 d-xl-none">
+    <a class="nav-item nav-link px-0 me-xl-4" href="javascript:void(0)">
+      <i class="bx bx-menu bx-sm"></i>
+    </a>
+  </div>
+  {% endif %}
+  <div class="navbar-nav-right d-flex align-items-center" id="navbar-collapse">
+
+    <!-- Search -->
+    <div class="navbar-nav align-items-center">
+      <div class="nav-item d-flex align-items-center">
+        <i class="bx bx-search fs-4 lh-0"></i>
+        <input type="text" class="form-control border-0 shadow-none ps-1 ps-sm-2" placeholder="Search..." aria-label="Search...">
+      </div>
+    </div>
+    <!-- /Search -->
+
+    <ul class="navbar-nav flex-row align-items-center ms-auto">
+      <!-- Place this tag where you want the button to render. --> 
+
+      <!-- User -->
+      <li class="nav-item navbar-dropdown dropdown-user dropdown">
+        <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown">
+          <div class="avatar avatar-online">
+            <img src="{{ request.user.profile_pic}}" alt class="w-px-40 h-px-40 rounded-circle">
+          </div>
+        </a>
+        <ul class="dropdown-menu dropdown-menu-end">
+          <li>
+            <a class="dropdown-item" href="javascript:void(0);">
+              <div class="d-flex">
+                <div class="flex-shrink-0 me-3">
+                  <div class="avatar avatar-online">
+                    <img src="{{ request.user.profile_pic}}" alt class="w-px-40 h-px-40 rounded-circle">
+                  </div>
+                </div>
+                <div class="flex-grow-1 d-flex flex-column justify-content-center">
+                  <span class="fw-medium d-block">{{ request.user.first_name}}</span>
+                  <small class="text-muted">{{ request.user.last_name}}</small>
+                </div>
+              </div>
+            </a>
+          </li>
+          <li>
+            <div class="dropdown-divider"></div>
+          </li>
+          <li>
+            <a class="dropdown-item" href="{% url 'student_view_profile'%}">
+              <i class="bx bx-user me-2"></i>
+              <span class="align-middle">My Profile</span>
+            </a>
+          </li>  
+          <li>
+            <div class="dropdown-divider"></div>
+          </li>
+          <li>
+            <button id="log-out-btn" class="dropdown-item">
+              <i class="bx bx-power-off me-2"></i>
+              <span class="align-middle">Log Out</span>
+            </button> 
+          </li>
+        </ul>
+      </li>
+      <!--/ User  href="{% url 'user_logout' %}-->
+    </ul>
+  </div>
+</nav>
+
+<script src="{% static 'vendor/libs/jquery/jquery.js' %}"></script> 
+<script src="{% static 'js/axios.js' %}"></script>
+<script> 
+  axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+  axios.defaults.xsrfCookieName = 'csrftoken'; 
+  $(document).ready(function () {
+    $('#log-out-btn').on('click', function() 
+    {    
+      var route = "logout_user/"  
+      Swal.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: !0,
+        confirmButtonText: "Yes, log out!",
+        customClass: {
+            confirmButton: "btn btn-primary me-3",
+            cancelButton: "btn btn-label-secondary"
+        },
+        buttonsStyling: !1
+    }).then(function(t) { 
+      $.ajax({
+        url: 'http://127.0.0.1:8000/logout_user/' , 
+        type: 'GET',
+        success: function(data) {   
+          location.reload();
+          {% comment %} t.value && Swal.fire({
+            icon: "success",
+            title: "Log out!",
+            text: "Your file has been deleted.",
+            customClass: {
+                confirmButton: "btn btn-success"
+            }
+         }) {% endcomment %}
+        },
+        error: function(xhr, status, error) { 
+
+        }
+      });
+    })
+    }); 
+  })
+</script>

@@ -1,55 +1,52 @@
+
 {% extends 'main_app/base.html' %}
 {% load static %}
-{% block page_title %}{{page_title}}{% endblock page_title %}
+{% block title %}{{page_title}}{% endblock title %}
 
 {% block content %}
 
-<section class="content">
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-md-12">
-                <!-- general form elements -->
-                <div class="card card-dark">
-                    <div class="card-header">
-                        <h3 class="card-title">{{page_title}}</h3>
-                    </div>
-
-                    {% include "main_app/form_template.html" with messages=messages  form=form button_text="Submit Feedback"%}
-                </div>
-                <!-- /.card -->
-<div class="card card-dark">
-    <div class="card-header"><h3 class="card-title">{{page_title}}</h3>
+<div class="d-flex align-items-center justify-content-between">
+    <h4 class="py-3 mb-4">
+      <span class="text-muted fw-light">Feedback /</span>  
+    </h4> 
+</div> 
+<div class="col_xxl">
+    <div class="card mb-4">  
+        {% include "main_app/form_template.html" with messages=messages  form=form button_text="Submit Feedback"%}
     </div>
-   <div class="table p-2">
-
-       <table class="table table-bordered">
-           <tr>
-               <th>ID</th>
-               <th>Feedback</th>
-               <th>Reply</th>
-            <th>Created At</th>
-        </tr>
-        {% for feedback in feedbacks %}
-        <tr>
-            <td>{{forloop.counter}}</td>
-            <td>{{feedback.feedback}}</td>
-              <td>
-                  
-                  {% if feedback.reply == "" %}
-                      <p class="badge badge-warning">No Response Yet</p>
-                      {% else %}
-                      {{feedback.reply}}
-                  {% endif %}
-                      
-              </td>
-              <td>{{feedback.created_at}}</td>
-            </tr>
-            {% endfor %}
+</div>
+<div class="card">
+    <div class="d-flex justify-content-between align-items-center">
+      <h5 class="card-header">Sendend feedback</h5> 
+    </div>
+    <div class="table-responsive text-nowrap">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Feedback</th>
+                    <th>Reply</th>
+                    <th>Created At</th> 
+                </tr>
+            </thead>
+            <tbody class="table-border-bottom-0"> 
+                {% for feedback in feedbacks %}
+                <tr>
+                    <td>{{forloop.counter}}</td>
+                    <td>{{feedback.feedback}}</td>
+                    <td> 
+                        {% if feedback.reply == "" %}
+                            <p class="badge bg-label-warning">No Response Yet</p>
+                            {% else %}
+                            {{feedback.reply}}
+                        {% endif %}
+                            
+                    </td>              
+                <td>{{feedback.created_at}}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
         </table>
     </div>
-    </div>
-            </div>
-        </div>
-    </div>
-</section>
+</div>
 {% endblock content %}

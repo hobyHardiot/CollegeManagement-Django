@@ -1,55 +1,106 @@
 {% extends 'main_app/base.html' %}
 {% load static %}
-{% block page_title %}{{page_title}}{% endblock page_title %}
+{% block title %}{{page_title}}{% endblock title %}
 
 {% block content %}
-
-<section class="content">
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-md-12">
-                <div class="d-flex justify-content-end">
-                    <a href="{% url 'add_students' %}">
-                        <button class="btn btn-primary mb-3">Add</button>
-                    </a>
+  <h4 class="py-3 mb-4">
+    <span class="text-muted fw-light">Students /</span> Manage
+  </h4>
+  <!-- Basic Bootstrap Table -->
+  <div class="card">
+    <div class="d-flex justify-content-between align-items-center">
+      <h5 class="card-header">{{page_title}}</h5>
+      <div class="d-flex justify-content-end"> 
+          <button id="addBtn" class="btn btn-secondary create-new btn-primary mx-3" tabindex="0" aria-controls="DataTables_Table_0" type="button"  data-bs-toggle="modal" data-bs-target="#addModal">
+            <span>
+              <i class="bx bx-plus me-sm-1"></i> 
+              <span class="d-none d-sm-inline-block">Add</span>
+            </span>
+          </button> 
+          <div class="modal fade" id="addModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-md" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLabel2">Add student</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">{{page_title}}</h3>
-                    </div>
-                    <!-- /.card-header -->
-                    <div class="card-body">
-                        <table id="example2" class="table table-bordered table-hover">
-                            <thead class="thead-dark">
-                                <tr>
-                                    <th>Mattricule</th>
-                                    <th>Full Name</th>
-                                    <th>Mobile number</th>
-                                    <th>Adress</th> 
-                                    <th>Level</th> 
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for student in students %}
-                                <tr> 
-                                    <td>{{student.numMattr}}</td>
-                                    <td>{{student.firstname}}, {{student.lastname}}</td>
-                                    <td>{{student.mobile_number}}</td>
-                                    <td>{{student.location}}</td> 
-                                    <td>{{student.niveau}}</td> 
-                                    <td><a href="{% url 'edit_students' student.id %}" class="btn btn-info">Edit</a> -
-                                        <a href="{% url 'delete_students' student.id %}" class="btn btn-danger" onclick="return confirm('Are you sure about this ?')">Delete</a>
+                <div class="modal-body">  
 
-                                    </td> 
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+                </div> 
+              </div>
             </div>
-        </div>
+          </div> 
+      </div>
     </div>
-</section>
+    <div class="table-responsive text-nowrap">
+        <table class="table">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Mattricule</th>
+                    <th>Full Name</th>
+                    <th class="text-center">Mobile number</th>
+                    <th class="text-center">Adress</th> 
+                    <th class="text-center">Level</th> 
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for student in students %}
+                <tr> 
+                    <td>{{student.numMattr}}</td>
+                    <td>{{student.firstname}}, {{student.lastname}}</td>
+                    <td class="text-center">{{student.mobile_number}}</td>
+                    <td class="text-center">{{student.location}}</td> 
+                    <td class="text-center">{{student.niveau}}</td> 
+                    <td align="right">
+                        <a href="{% url 'edit_students' student.id %}">
+                          <i class="bx bx-edit-alt me-1"></i>
+                        </a>
+                        <a href="{% url 'delete_students' student.id %}" onclick="return confirm('Are you sure you want to delete this student ?')">
+                          <i class="bx bx-trash me-2"></i>
+                        </a> 
+                    </td>  
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+  </div>
+  
+  <div id="success-toasts" class="bs-toast toast toast-ex animate__animated my-2   bg-success" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="2000">
+    <div class="toast-header">
+      <i class="bx bx-check me-2"></i>
+      <div class="me-auto fw-medium">Success</div>
+      <small>now</small>
+      <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+    <div class="toast-body">
+      Added successfully
+    </div>
+  </div>
+  <div id="error-toasts" class="bs-toast toast toast-ex animate__animated my-2   bg-danger" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="2000">
+    <div class="toast-header">
+      <i class="bx bx-error-alt me-2"></i>
+      <div class="me-auto fw-medium">Error</div>
+      <small>now</small>
+      <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+    <div class="toast-body">
+      Mattricule already exists
+    </div>
+  </div>
 {% endblock content %}
+{% block page_js %} 
+<script> 
+  axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+  axios.defaults.xsrfCookieName = 'csrftoken'; 
+  $(document).ready(function () {  
+    $('#addBtn').click(function() 
+    {    
+      loadModalData('#addModal','students/add',{},function(){ 
+      })    
+    }); 
+ 
+  }); 
+</script>
+{% endblock page_js %}

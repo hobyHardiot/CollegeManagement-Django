@@ -115,7 +115,7 @@ def staff_fcmtoken(request):
  
 
 def staff_view_groupe(request): 
-    prerequisGroupes = PrerequisGroupe.objects.all()
+    prerequisGroupes = PrerequisGroupe.objects.filter(author=request.user)
     context = {
         'prerequisGroupes': prerequisGroupes,
         'page_title': 'Manage Groupe'
@@ -128,20 +128,36 @@ def staff_add_groupe(request):
         form = PrerequisGroupeForm(request.POST)
         if form.is_valid():
             try:
-                form.save()
+                prerequisGroupe = PrerequisGroupe()
+                prerequisGroupe.module = form.cleaned_data.get('module') 
+                prerequisGroupe.niveau = form.cleaned_data.get('niveau') 
+                prerequisGroupe.start_date = form.cleaned_data.get('start_date') 
+                prerequisGroupe.end_date = form.cleaned_data.get('end_date') 
+                prerequisGroupe.description = form.cleaned_data.get('description') 
+                prerequisGroupe.author = request.user
+                prerequisGroupe.save()
                 messages.success(request, "Successfully Added")
                 return redirect('staff_view_groupe')
              
             except Exception as e:
-                messages.error(request, "Could Not Add" + str(e))
+                print("Could Not Add" + str(e))
     else:
         form = PrerequisGroupeForm()
     return render(request, 'staff_template/add_groupe_template.html', {'form': form})
 
+def delete_prerequis_groupe(request, prerequisgroupe_id):
+    prerequisgroupe = get_object_or_404(PrerequisGroupe, id=prerequisgroupe_id)
+    try:
+        prerequisgroupe.delete()
+        messages.success(request, "deleted successfully!")
+    except Exception:
+        messages.error(
+            request, "Sorry, try again")
+    return redirect(reverse('staff_view_groupe'))
 
 
 def manage_project(request): 
-    projects = Projet.objects.all()
+    projects = Projet.objects.filter(author=request.user)
     context = {
         'projects': projects,
         'page_title': 'Manage projects'
@@ -155,21 +171,20 @@ def add_project(request):
         'form': form,
         'page_title': 'Add project'
     }
-    if request.method == 'POST':
-        if form.is_valid():
-            nom = form.cleaned_data.get('nom')
-            description = form.cleaned_data.get('description')
-            try:
-                project = Projet()
-                project.nom = nom
-                project.description = description
-                project.save()
-                messages.success(request, "Successfully Added")
-                return redirect(reverse('manage_project'))
-            except:
-                messages.error(request, "Could Not Add")
-        else:
-            messages.error(request, "Could Not Add")
+    if request.method == 'POST': 
+        nom = request.POST['nom']
+        description = request.POST['description']
+        try:
+            project = Projet()
+            project.nom = nom
+            project.description = description
+            project.author = request.user
+            project.save()
+            print("Successfully Added")
+            return JsonResponse({'success': 'Added successfully'})
+        except Exception as e:
+            print(e)
+            return JsonResponse({'error': 'Une erreur est survenue'})  
     return render(request, 'staff_template/add_project_template.html', context)
 
 

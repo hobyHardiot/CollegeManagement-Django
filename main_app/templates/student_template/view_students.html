@@ -1,10 +1,40 @@
 {% extends 'main_app/base.html' %}
 {% load static %}
-{% block page_title %}{{page_title}}{% endblock page_title %}
+{% block title %}{{page_title}}{% endblock title %}
 
 {% block content %}
-
-<section class="content">
+<h4 class="py-3 mb-4">
+    <span class="text-muted fw-light">Students /</span> View
+</h4>
+  <!-- Basic Bootstrap Table -->
+<div class="card">
+    <div class="d-flex justify-content-between align-items-center">
+      <h5 class="card-header">Students</h5> 
+    </div>
+    <div class="table-responsive text-nowrap">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Mattricule</th>
+                    <th>Full Name</th>
+                    <th class="text-center">Mobile number</th>
+                    <th>Adress</th>  
+                </tr>
+            </thead>
+            <tbody class="table-border-bottom-0">
+                {% for student in students %}
+                <tr>
+                    <td>{{student.numMattr}}</td>
+                    <td>{{student.firstname}}  {{student.lastname}}</td>
+                    <td align="center">{{student.mobile_number}}</td>
+                    <td>{{student.location}}</td>  
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% comment %} <section class="content">
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-12"> 
@@ -41,5 +71,5 @@
             </div>
         </div>
     </div>
-</section>
+</section> {% endcomment %}
 {% endblock content %}

@@ -17,9 +17,17 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf.urls.static import static
 from . import settings
+from web_project.views import SystemView
 
 urlpatterns = [
     path("", include('main_app.urls')),
     path("accounts/", include("django.contrib.auth.urls")),
-    path('admin/', admin.site.urls),
+    path('admin/', admin.site.urls), 
+    
+    path("", include("apps.dashboards.urls")), 
+    path("", include("apps.pages.urls")), 
+    path("", include("apps.authentication.urls")), 
+    path("", include("apps.ui.urls")),  
+    path("", include("apps.forms.urls")), 
+    path("", include("apps.tables.urls")),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

@@ -107,6 +107,7 @@ urlpatterns = [
     path("staff/fcmtoken/", staff_views.staff_fcmtoken, name='staff_fcmtoken'), 
     path("staff/groupe/view", staff_views.staff_view_groupe, name='staff_view_groupe'),  
     path("staff/groupe/add", staff_views.staff_add_groupe, name='staff_add_groupe'),
+    path("staff/groupe/delete/<int:prerequisgroupe_id>", staff_views.delete_prerequis_groupe, name='delete_prerequis_groupe'),
 
     path("staff/project/manage", staff_views.manage_project, name='manage_project'), 
     path("staff/project/add", staff_views.add_project, name='add_project'),
@@ -126,6 +127,10 @@ urlpatterns = [
     path("student/lists/", student_views.view_students, name='view_students'),
 
     path("groupe/manage", student_views.manage_groupe, name='manage_groupe'), 
+    path("groupe/manage_2/<int:prerequisGroupe_id>", student_views.show_groupe_by_prerequisId, name='show_groupe_by_prerequisId'), 
+    path("groupe/manage_3/<int:prerequisGroupe_id>", student_views.manage_groupe_form, name='manage_groupe_form'), 
+    path("groupe/manage_4/<int:prerequisGroupe_id>", student_views.getGroupeByPrerequisId, name='getGroupeByPrerequisId'), 
     path("groupe/add", student_views.add_groupe, name='add_groupe'),
     path("groupe/edit/<int:groupe_id>", student_views.edit_groupe, name='edit_groupe'),
+    path("groupe/delivre/<int:prerequisGroupe_id>", student_views.delivre_groupe, name='delivre_groupe'),
 ]

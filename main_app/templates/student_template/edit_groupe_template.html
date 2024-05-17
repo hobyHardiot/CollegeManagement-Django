@@ -4,7 +4,20 @@
 
 {% block content %}
 
-<section class="content">
+<div class="d-flex align-items-center justify-content-between">
+    <h4 class="py-3 mb-4">
+      <span class="text-muted fw-light">Groupe /</span> Edit
+    </h4> 
+</div>
+<div class="card"> 
+    <h5 class="card-header">{{page_title}}</h5> 
+    <div class="card-body">
+        <div>
+            {% include "main_app/form_template.html" with messages=messages  form=form button_text="Update groupe"%}
+        </div>
+    </div> 
+</div>
+{% comment %} <section class="content">
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-12">
@@ -20,5 +33,5 @@
             </div>
         </div>
     </div>
-</section>
+</section> {% endcomment %}
 {% endblock content %}

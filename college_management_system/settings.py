@@ -14,11 +14,14 @@ import dj_database_url
 import os
 from pathlib import Path
 
+from .template import  THEME_LAYOUT_DIR, THEME_VARIABLES
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
+ENVIRONMENT = os.environ.get("DJANGO_ENVIRONMENT", default="local")
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
@@ -42,10 +45,18 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django_select2',
-
+    'django_select2', 
+    'main_app.apps.MainAppConfig',
     # My Apps
-    'main_app.apps.MainAppConfig'
+    "apps.dashboards", 
+    "apps.pages",
+    "apps.authentication", 
+    "apps.ui",  
+    "apps.forms", 
+    "apps.tables",
+
+
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
@@ -62,14 +73,20 @@ MIDDLEWARE = [
 
     # My Middleware
     'main_app.middleware.LoginCheckMiddleWare',
-]
 
+
+    'corsheaders.middleware.CorsMiddleware',
+]
+CORS_ORIGIN_ALLOW_ALL = False
+CORS_ORIGIN_WHITELIST = (
+    'http://localhost:8000',  # Remplacez par le domaine de votre application frontend
+)
 ROOT_URLCONF = 'college_management_system.urls'
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ['main_app/templates'], #My App Templates
+        'DIRS':  [BASE_DIR / "templates"],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -77,6 +94,15 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                "college_management_system.context_processors.my_setting",
+                "college_management_system.context_processors.environment",
+            ],
+            "libraries": {
+                "theme": "web_project.template_tags.theme",
+            },
+            "builtins": [
+                "django.templatetags.static",
+                "web_project.template_tags.theme",
             ],
         },
     },
@@ -130,7 +156,7 @@ else:
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'UTC+3'
 
 USE_I18N = True
 
@@ -168,3 +194,19 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 prod_db = dj_database_url.config(conn_max_age=500)
 DATABASES['default'].update(prod_db)
+
+
+#STATIC_URL = "/static/"
+STATIC_ROOT = BASE_DIR / "staticfiles"
+
+
+STATICFILES_DIRS = [
+    BASE_DIR / "src" / "assets",
+]
+
+# Default URL on which Django application runs for specific environment
+BASE_URL = os.environ.get("BASE_URL", default="http://127.0.0.1:8000")
+#
+
+THEME_LAYOUT_DIR = THEME_LAYOUT_DIR
+THEME_VARIABLES = THEME_VARIABLES

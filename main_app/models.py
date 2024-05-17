@@ -201,6 +201,7 @@ def save_user_profile(sender, instance, **kwargs):
 class Projet(models.Model):
     nom = models.CharField(max_length=255, blank=False)
     description = models.TextField(max_length=255, blank=True) 
+    author = models.ForeignKey(CustomUser, on_delete=models.CASCADE, default="")
     def __str__(self):
         return self.nom
 
@@ -219,15 +220,26 @@ class Students(models.Model):
 
 
 
-class Groupe(models.Model):
-    numero = models.IntegerField(unique=True)  # Le numéro du groupe
-    etudiants = models.ManyToManyField(Students)
-    projet = models.ForeignKey(Projet, on_delete=models.CASCADE)
-
 class PrerequisGroupe(models.Model):
     module = models.CharField(max_length=40, blank=False)
     niveau = models.ForeignKey(Course, on_delete=models.CASCADE, default="")
-    status = models.BooleanField(default=False)
-    delais = models.IntegerField(blank=False) 
+    status = models.IntegerField() 
+    start_date = models.DateField()
+    end_date = models.DateField()
+    author = models.ForeignKey(CustomUser, on_delete=models.CASCADE, default="")
+    description = models.TextField(max_length=255, blank=True) 
     def __str__(self):
         return self.module
+    
+
+class Groupe(models.Model):
+    numero = models.IntegerField()  # Le numéro du groupe
+    projet = models.ForeignKey(Projet, on_delete=models.CASCADE, null=True)
+    niveau = models.ForeignKey(Course, on_delete=models.CASCADE, default=None)
+    prerequisGroupe = models.ForeignKey(PrerequisGroupe, on_delete=models.CASCADE, default=None) 
+    etudiants = models.ManyToManyField(Students, through='GroupeEtudiant')
+
+class GroupeEtudiant(models.Model):
+    groupe = models.ForeignKey(Groupe, on_delete=models.CASCADE)
+    etudiant = models.ForeignKey(Students, on_delete=models.CASCADE)
+    prerequisGroupe = models.ForeignKey(PrerequisGroupe, on_delete=models.CASCADE, default=None)

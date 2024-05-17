@@ -8,6 +8,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 from .EmailBackend import EmailBackend
 from .models import Attendance, Session, Subject
+from web_project import TemplateLayout
 
 # Create your views here.
 
