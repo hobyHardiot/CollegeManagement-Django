@@ -165,6 +165,15 @@ def manage_project(request):
     return render(request, "staff_template/manage_project.html", context)
 
 
+def show_groupe_by_prerequisId(request, prerequisGroupe_id): 
+
+    groupes = Groupe.objects.filter(prerequisGroupe = prerequisGroupe_id)
+    context = {
+        'groupes':groupes, 
+    }
+    print(prerequisGroupe_id)
+    return render(request, "staff_template/manage_groupe_2.html",context)
+
 def add_project(request):
     form = ProjectForm(request.POST or None)
     context = {

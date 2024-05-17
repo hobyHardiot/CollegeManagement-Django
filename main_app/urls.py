@@ -109,6 +109,8 @@ urlpatterns = [
     path("staff/groupe/add", staff_views.staff_add_groupe, name='staff_add_groupe'),
     path("staff/groupe/delete/<int:prerequisgroupe_id>", staff_views.delete_prerequis_groupe, name='delete_prerequis_groupe'),
 
+    path("staff/groupe/manage_2/<int:prerequisGroupe_id>", staff_views.show_groupe_by_prerequisId, name='show_groupe_by_prerequisId'), 
+
     path("staff/project/manage", staff_views.manage_project, name='manage_project'), 
     path("staff/project/add", staff_views.add_project, name='add_project'),
     path("staff/project/edit/<int:project_id>", staff_views.edit_project, name='edit_project'),

@@ -1,64 +1,12 @@
 {% extends 'main_app/base.html' %}
 {% load static %}
-{% block page_title %}{{page_title}}{% endblock page_title %}
+{% block title %}{{page_title}}{% endblock title %}
 
 {% block content %}
-
- {% comment %} <section class="content">
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-md-12">
-                <div class="d-flex justify-content-end">
-                    <a href="{% url 'staff_add_groupe' %}">
-                        <button class="btn btn-primary mb-3">Add groupe</button>
-                    </a>
-                </div> 
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">{{page_title}}</h3>
-                    </div>
-                    <!-- /.card-header -->
-                    <div class="card-body">
-
-                        <table id="example2" class="table table-bordered table-hover">
-                            <thead class="thead-dark">
-                                <tr>
-                                    <th>Id</th>
-                                    <th>Module</th>
-                                    <th>Level</th>
-                                    <th>Start date</th>  
-                                    <th>Deadline</th>  
-                                    <th>Status</th>  
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for prerequisGroupe in prerequisGroupes %} 
-                                <tr> 
-                                    <td>{{forloop.counter}}</td>
-                                    <td>{{prerequisGroupe.module}}</td>
-                                    <td>{{ prerequisGroupe.niveau }} </td> 
-                                    <td>{{ prerequisGroupe.start_date  }}</td>    
-                                    <td>{{ prerequisGroupe.end_date }}</td>    
-                                    {% if prerequisGroupe.status  == 0 %}
-                                        <td><span  class='badge badge-secondary'>Pending</span></td>
-                                        {% elif prerequisGroupe.status  == 1 %}
-                                        <td> <button data-toggle = "modal" data-target = "#reply_modal" value="{{leave.id}}" class="btn btn-success">Ready</button></td>
-
-                                        {% endif %}  
-                                </tr> 
-                                {% endfor %}
-                            </tbody>
-                        </table>
-
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>  {% endcomment %}
+ 
 <div class="d-flex align-items-center justify-content-between">
   <h4 class="py-3 mb-4">
-    <span class="text-muted fw-light">Tables /</span> Basic Tables
+    <span class="text-muted fw-light">Groupe /</span> Manage
   </h4>
   <a href="{% url 'staff_add_groupe' %}">
     <button class="btn btn-secondary btn-primary" type="button">
@@ -76,7 +24,8 @@
           <div class="d-flex align-items-center">
             <div class="d-flex align-items-start"> 
               <div class="me-2">
-                <h5 class="mb-1"><a href="javascript:;" class="h5 {% if prerequisGroupe.status  == 1 %}stretched-link{% endif %}">{{prerequisGroupe.module}}</a></h5> 
+                <h5 class="mb-1"><a href="javascript:;" id="open_modal_{{ prerequisGroupe.id }}" data-bs-toggle="modal" data-bs-target="#modal_{{ prerequisGroupe.id }}" class="h5 stretched-link" data-id="{{ prerequisGroupe.id }}">{{prerequisGroupe.module}}</a>
+                </h5> 
               </div>
             </div>
             <div class="ms-auto z-2">
@@ -114,6 +63,46 @@
         
       </div>
   </div>
+  <div class="modal fade mt-0"  id="modal_{{ prerequisGroupe.id }}"  tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <div class="d-flex align-items-center justify-content-between w-100"> 
+            <h5 class="modal-title" id="backDropModalTitle">Groupe {{ prerequisGroupe.module }}</h5>   
+            <div>
+              <a href="{% url 'assign_project_manytoone' %}">
+                <button class="btn btn-primary mb-3">Assign project 2</button>
+              </a> 
+              <a href="{% url 'assign_project' %}">
+                <button class="btn btn-primary mb-3">Assign project</button>
+              </a>
+            </div> 
+          </div>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" style="position: absolute;right: 22px; top: 32px;" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">  
+
+        </div> 
+      </div>
+    </div>
+  </div> 
   {% endfor %}
 </div>
 {% endblock content %}
+{% block page_js %}
+<script> 
+axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+axios.defaults.xsrfCookieName = 'csrftoken'; 
+$(document).ready(function () { 
+  $('[data-id]').click(function() 
+  { 
+    var groupId = $(this).data('id'); 
+    var idModal = "#modal_" + groupId;
+    prerequisGroupeId=groupId;
+    
+    loadModalData(idModal,"staff/groupe/manage_2/"+groupId,{},function(){ 
+    })      
+  });
+}); 
+</script>
+{% endblock page_js %}
