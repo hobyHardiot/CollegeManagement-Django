@@ -24,11 +24,12 @@
     <ul class="navbar-nav flex-row align-items-center ms-auto">
       <!-- Place this tag where you want the button to render. --> 
 
-      <!-- User -->
+      <!-- User
+         -->
       <li class="nav-item navbar-dropdown dropdown-user dropdown">
         <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown">
           <div class="avatar avatar-online">
-            <img src="{{ request.user.profile_pic}}" alt class="w-px-40 h-px-40 rounded-circle">
+            <img src="{% if request.user.profile_pic == "" %}{% static 'img/avatars/avatar_12.jpg' %} {% else %} {{ request.user.profile_pic}} {% endif %}" alt class="w-px-40 h-px-40 rounded-circle">
           </div>
         </a>
         <ul class="dropdown-menu dropdown-menu-end">
@@ -37,11 +38,11 @@
               <div class="d-flex">
                 <div class="flex-shrink-0 me-3">
                   <div class="avatar avatar-online">
-                    <img src="{{ request.user.profile_pic}}" alt class="w-px-40 h-px-40 rounded-circle">
+                    <img src="{% if request.user.profile_pic == "" %}{% static 'img/avatars/avatar_12.jpg' %} {% else %} {{ request.user.profile_pic}} {% endif %}" alt class="w-px-40 h-px-40 rounded-circle">
                   </div>
                 </div>
                 <div class="flex-grow-1 d-flex flex-column justify-content-center">
-                  <span class="fw-medium d-block">{{ request.user.first_name}}</span>
+                  <span class="fw-medium d-block">{% if request.user.first_name == "" %}Admin{% else %}{{ request.user.first_name}}{% endif %} </span>
                   <small class="text-muted">{{ request.user.last_name}}</small>
                 </div>
               </div>
@@ -51,10 +52,22 @@
             <div class="dropdown-divider"></div>
           </li>
           <li>
+            {% if request.user.user_type == '1' %} 
+            <a class="dropdown-item" href="{% url 'admin_view_profile'%}">
+              <i class="bx bx-user me-2"></i>
+              <span class="align-middle">My Profile</span>
+            </a>
+            {% elif request.user.user_type == '2' %} 
+            <a class="dropdown-item" href="{% url 'staff_view_profile'%}">
+              <i class="bx bx-user me-2"></i>
+              <span class="align-middle">My Profile</span>
+            </a>
+            {% else %}
             <a class="dropdown-item" href="{% url 'student_view_profile'%}">
               <i class="bx bx-user me-2"></i>
               <span class="align-middle">My Profile</span>
             </a>
+            {% endif %}
           </li>  
           <li>
             <div class="dropdown-divider"></div>

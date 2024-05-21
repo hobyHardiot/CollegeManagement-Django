@@ -38,8 +38,6 @@ urlpatterns = [
 
 
 
-    path("project/assign", hod_views.assign_project, name='assign_project'),
-    path("project/assign2", hod_views.assign_project_manytoone, name='assign_project_manytoone'),
  
 
 
@@ -116,6 +114,8 @@ urlpatterns = [
     path("staff/project/edit/<int:project_id>", staff_views.edit_project, name='edit_project'),
     path("staff/project/delete/<int:project_id>", staff_views.delete_project, name='delete_project'),
 
+    path("staff/groupe/assign", staff_views.assign_project, name='assign_project'),
+    path("staff/groupe/assign2/<int:prerequisGroupe_id>", staff_views.assign_project_manytoone, name='assign_project_manytoone'),
 
     # Student
     path("student/home/", student_views.student_home, name='student_home'),  

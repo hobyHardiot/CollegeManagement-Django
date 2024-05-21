@@ -5,7 +5,7 @@
       <label for="numMattr">Mattricule</label> 
     </div>
     <div class="col-12 col-md-6"> 
-      <select id="modalEditUserStatus" name="niveau" style="height:58px" class="form-select" aria-label="Default select example"> 
+      <select  name="niveau" style="height:58px" class="form-select" aria-label="Default select example"> 
         {% for level in levels %}
           <option value="{{ forloop.counter }}">{{level.name}}</option> 
         {% endfor %}

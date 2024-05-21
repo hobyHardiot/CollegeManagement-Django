@@ -196,7 +196,7 @@
     }); 
     $("[delivre-groupe-btn]").on('click', function() 
     { 
-      var route = "logout_user/"
+      var route = "groupe/delivre/" + prerequisGroupeId;
       postData(route,{},function(response){ 
         Swal.fire({
           title: "Successfully",

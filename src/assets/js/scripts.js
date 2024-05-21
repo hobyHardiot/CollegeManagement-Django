@@ -322,13 +322,13 @@ function loadModalData(idModal,route,form, callback) {
       
       postData(route, form, function(response) {   
           setTimeout(function() { 
-              modal.find('.modal-body').fadeOut("fast", function() { 
+              modal.find('.modal-body').fadeOut(100, function() { 
                   modal.find('.modal-body').html(response.data); 
                   if (typeof callback === 'function') {
                       callback(response.data);
                   } 
                   $('input:text:visible:first').focus();  
-                  modal.find('.modal-body').fadeIn("fast");
+                  modal.find('.modal-body').fadeIn(100);
               });
           }, 1000);  
       });

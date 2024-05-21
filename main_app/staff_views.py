@@ -9,6 +9,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 from .forms import *
 from .models import *
+import random
 
 
 def staff_home(request):
@@ -26,7 +27,7 @@ def staff_home(request):
         subject_list.append(subject.name)
         attendance_list.append(attendance_count)
     context = {
-        'page_title': 'Staff Panel - ' + str(staff.admin.last_name) + ' (' + str(staff.course) + ')',
+        'page_title': 'Home',
         'total_students': total_students,
         'total_attendance': total_attendance,
         'total_leave': total_leave,
@@ -124,26 +125,37 @@ def staff_view_groupe(request):
 
 
 def staff_add_groupe(request):
-    if request.method == 'POST':
-        form = PrerequisGroupeForm(request.POST)
-        if form.is_valid():
-            try:
-                prerequisGroupe = PrerequisGroupe()
-                prerequisGroupe.module = form.cleaned_data.get('module') 
-                prerequisGroupe.niveau = form.cleaned_data.get('niveau') 
-                prerequisGroupe.start_date = form.cleaned_data.get('start_date') 
-                prerequisGroupe.end_date = form.cleaned_data.get('end_date') 
-                prerequisGroupe.description = form.cleaned_data.get('description') 
-                prerequisGroupe.author = request.user
-                prerequisGroupe.save()
-                messages.success(request, "Successfully Added")
-                return redirect('staff_view_groupe')
-             
-            except Exception as e:
-                print("Could Not Add" + str(e))
-    else:
-        form = PrerequisGroupeForm()
-    return render(request, 'staff_template/add_groupe_template.html', {'form': form})
+    levels = Course.objects.all()
+    context = {  
+        'levels' : levels
+    }  
+    if request.method == 'POST':  
+        module = request.POST['module']
+        niveau_id = request.POST['niveau'] 
+        start_date = request.POST['start_date'] 
+        end_date = request.POST['end_date'] 
+        description = request.POST['description']
+        try:
+            niveau = Course.objects.get(id=niveau_id)
+            prerequisGroupe = PrerequisGroupe() 
+
+
+            prerequisGroupe.module = module
+            prerequisGroupe.start_date = start_date
+            prerequisGroupe.end_date = end_date
+            prerequisGroupe.description = description
+            prerequisGroupe.author = request.user
+            prerequisGroupe.status = -1
+            prerequisGroupe.niveau = niveau 
+            prerequisGroupe.save()
+            messages.success(request, "Successfully Added")
+            print("Successfully Added")
+            return JsonResponse({'success': 'Added successfully'})
+            
+        except Exception as e:
+            print(e)
+            return JsonResponse({'error': 'Une erreur est survenue'})  
+    return render(request, 'staff_template/add_groupe_template.html', context)
 
 def delete_prerequis_groupe(request, prerequisgroupe_id):
     prerequisgroupe = get_object_or_404(PrerequisGroupe, id=prerequisgroupe_id)
@@ -174,10 +186,8 @@ def show_groupe_by_prerequisId(request, prerequisGroupe_id):
     print(prerequisGroupe_id)
     return render(request, "staff_template/manage_groupe_2.html",context)
 
-def add_project(request):
-    form = ProjectForm(request.POST or None)
-    context = {
-        'form': form,
+def add_project(request): 
+    context = { 
         'page_title': 'Add project'
     }
     if request.method == 'POST': 
@@ -198,27 +208,25 @@ def add_project(request):
 
 
 def edit_project(request, project_id):
-    project = get_object_or_404(Projet, id=project_id)
-    form = ProjectForm(request.POST or None, instance=project)
-    context = {
-        'form': form,
+    project = get_object_or_404(Projet, id=project_id) 
+    context = { 
         'project_id': project_id,
-        'page_title': 'Edit project'
+        'page_title': 'Edit project',
+        'project' : project
     }
-    if request.method == 'POST':
-        if form.is_valid():
-            nom = form.cleaned_data.get('nom')
-            description = form.cleaned_data.get('description') 
-            try: 
-                project.nom = nom
-                project.description = description 
-                project.save()
-                messages.success(request, "Successfully Updated")
-                return redirect(reverse('manage_project'))
-            except Exception as e:
-                messages.error(request, "Could Not Update " + str(e))
-        else:
-            messages.error(request, "Please Fill Form Properly!")
+    if request.method == 'POST': 
+        nom = request.POST['nom']
+        description = request.POST['description']
+        try:
+            project.nom = nom
+            project.description = description
+            project.author = request.user
+            project.save()
+            print("Successfully Added")
+            return JsonResponse({'success': 'Successfully'})
+        except Exception as e:
+            print(e)
+            return JsonResponse({'error': 'Une erreur est survenue'})  
     else:
         return render(request, "staff_template/edit_project_template.html", context)
     
@@ -233,3 +241,53 @@ def delete_project(request, project_id):
             request, "Sorry, try again")
     return redirect(reverse('manage_project'))
 
+
+def assign_project(request): 
+    groupes = list(Groupe.objects.filter(prerequisGroupe = 1))
+    projets = list(Projet.objects.filter(id = 1))
+    students = Students.objects.all()
+    context = {
+        'students': students,
+        'page_title': 'Manage Groupe'
+    }
+
+    random.shuffle(projets)
+    for i, groupe in enumerate(groupes):
+        # Assigner le projet au groupe
+        groupe.projet = projets[i]
+        groupe.save()
+
+    return render(request, "staff_template/manage_groupe.html", context)
+
+
+def assign_project_manytoone(request, prerequisGroupe_id): 
+    groupes = Groupe.objects.filter(prerequisGroupe = prerequisGroupe_id) 
+    projets = list(Projet.objects.all())
+    
+    # Vérification du nombre de projets par rapport au nombre de groupes
+    if len(projets) > len(groupes):
+        # Chaque groupe a son propre projet
+        for groupe in groupes:
+            projet_aleatoire = random.choice(list(projets))  # Sélectionner un projet aléatoire sans le retirer de la liste
+            groupe.projet = projet_aleatoire
+            groupe.save()
+            projets.remove(projet_aleatoire)  # Retirer le projet attribué de la liste des projets disponibles
+    else:
+        # Plusieurs groupes peuvent partager le même projet
+        for groupe in groupes:
+            projet_aleatoire = random.choice(list(projets))  # Sélectionner un projet aléatoire sans le retirer de la liste
+            groupe.projet = projet_aleatoire
+            groupe.save()
+    
+    context = {
+        'students': Students.objects.all(),
+        'page_title': 'Manage Groupe',
+        'groupes': groupes,
+    } 
+    
+    try:
+        print("Successfully Added")
+        return render(request, "staff_template/manage_groupe_2.html", context)
+    except Exception as e:
+        print(e)
+        return JsonResponse({'error': 'Une erreur est survenue'})

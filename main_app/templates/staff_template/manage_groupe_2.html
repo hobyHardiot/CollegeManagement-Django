@@ -28,20 +28,7 @@
                 <td class="text-center">{{ groupe.numero }}</td> 
                 <td class="text-center">{{ groupe.projet }}</td> 
             </tr>
-            {% endfor %}
-            <!-- Pour les étudiants sans groupe -->
-            {% for etudiant in etudiants_sans_groupe %}
-            <tr>
-                <td >
-                    {{ etudiant.numMattr }}
-                </td>
-                <td >
-                    {{ etudiant.firstname }} {{ etudiant.lastname }}
-                </td>
-                <td></td>
-                <td></td>
-            </tr>
-            {% endfor %}
+            {% endfor %} 
           </tbody>
         </table>
       </div>

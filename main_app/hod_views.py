@@ -9,7 +9,6 @@ from django.templatetags.static import static
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import UpdateView
-import random
 
 from .forms import *
 from .models import *
@@ -814,39 +813,3 @@ def delete_students(request, students_id):
     return redirect(reverse('manage_students'))
 
 
-
-def assign_project(request): 
-    groupes = list(Groupe.objects.all())
-    projets = list(Projet.objects.all())
-    students = Students.objects.all()
-    context = {
-        'students': students,
-        'page_title': 'Manage Groupe'
-    }
-
-    random.shuffle(projets)
-    for i, groupe in enumerate(groupes):
-        # Assigner le projet au groupe
-        groupe.projet = projets[i]
-        groupe.save()
-
-    return render(request, "hod_template/manage_groupe.html", context)
-
-
-def assign_project_manytoone(request): 
-    groupes = Groupe.objects.all()
-    projets = Projet.objects.all()
-    students = Students.objects.all()
-    context = {
-        'students': students,
-        'page_title': 'Manage Groupe'
-    }
-
-    for groupe in groupes:
-        # Sélectionner un projet aléatoire
-        projet_aleatoire = random.choice(projets) 
-        
-        # Assigner le projet au groupe
-        groupe.projet = projet_aleatoire
-        groupe.save()
-    return render(request, "hod_template/manage_groupe.html", context)

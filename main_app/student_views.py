@@ -297,7 +297,7 @@ def delivre_groupe(request, prerequisGroupe_id):
 
     prerequisGroupe = get_object_or_404(PrerequisGroupe, id=prerequisGroupe_id) 
  
-    if request.method == 'POST':   
+    if request.method == 'GET':   
         prerequisGroupe.status = 1 
         prerequisGroupe.save()
         return JsonResponse({'message': 'Saved'}) 

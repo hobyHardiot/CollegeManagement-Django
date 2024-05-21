@@ -1,18 +1,42 @@
-{% extends 'main_app/base.html' %}
-{% load static %}
-{% block page_title %}{{page_title}}{% endblock page_title %}
-
-{% block content %}
-
-<h4 class="py-3 mb-4">
-    <span class="text-muted fw-light">Projects /</span> Edit
-</h4> 
-<div class="card">
-    <div class="d-flex justify-content-between align-items-center">
-      <h5 class="card-header">{{page_title}}</h5>
-      <div class="d-flex justify-content-end"> 
-      </div>
-    </div> 
-    {% include "main_app/form_template.html" with messages=messages  form=form button_text="Update project"%}
-</div>
-{% endblock content %}
+<form class="row g-3" data-form-id="{{project.id}}" method="POST">
+  {% csrf_token %} 
+    <div class="col-12  mb-3 form-floating">
+      <input value="{{project.nom}}" required name="nom" type="text" class="form-control" id="nom" placeholder="Entre title here" aria-describedby="floatingInputHelp">
+      <label for="nom">Title</label> 
+    </div>   
+    <div class="col-12  mb-3"> 
+      <label for="description">Description</label> 
+      <textarea required name="description" class="form-control"  rows="3">{{project.description}}</textarea>
+    </div>   
+    <div class="modal-footer pb-0 px-0">
+      <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+      <button type="submit"   class="btn btn-primary">Save changes</button>
+    </div>
+  </form>
+  <script> 
+  $("[data-form-id]").submit(function(event) 
+  {
+    event.preventDefault();  
+    var id = $(this).data('form-id'); 
+    var formData = $(this).serialize(); 
+    $.ajax({
+      url: 'edit/' + id,
+      type: 'POST',
+      data: formData + '&csrfmiddlewaretoken=' + '{{ csrf_token }}',  
+      success: function(responseData) {    
+        if (responseData.success) {
+          $('#success-toasts').toast('show'); 
+          $('#addModal').modal('hide'); 
+          setTimeout(function() {
+              location.reload();
+          }, 700);
+        } else {
+          $('#error-toasts').toast('show');
+        }
+      },
+      error: function(data) {
+        console.log("data");
+      }
+    });
+  }); 
+  </script>

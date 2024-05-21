@@ -53,7 +53,8 @@
               <td>{{project.nom}}</td>
               <td>{{project.description}}</td>
               <td align="right">
-                  <a href="{% url 'edit_project' project.id %}">
+{% comment %} {% url 'edit_project' project.id %} {% endcomment %}
+                  <a data-edit-id="{{project.id}}" href="javascript:void(0)">
                     <i class="bx bx-edit-alt me-1"></i>
                   </a>
                   <a data-delete-id="{{project.id}}" href="javascript:void(0)">
@@ -75,7 +76,7 @@
       <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
     </div>
     <div class="toast-body">
-      Added successfully
+      Operation successfully
     </div>
   </div>
   <div id="error-toasts" class="bs-toast toast toast-ex animate__animated my-2   bg-danger" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="2000">
@@ -99,9 +100,7 @@
       loadModalData("#addModal","{% url 'add_project' %}",{},{},{})
     })
     $('[data-delete-id]').click(function(){    
-      var projectId = $(this).data('delete-id');
-    
-      // Display SweetAlert confirmation dialog
+      var projectId = $(this).data('delete-id'); 
       Swal.fire({
         title: 'Are you sure?',
         text: "Once deleted, you cannot undo this action.",
@@ -112,8 +111,7 @@
         confirmButtonText: 'Yes, delete it!',
         cancelButtonText: 'No, keep it'
       }).then((result) => {
-        if (result.isConfirmed) {
-          // Proceed with deletion if confirmed
+        if (result.isConfirmed) { 
           postData("staff/project/delete/"+projectId, {}, function(response) { 
             Swal.fire({
               title: "Deletion successful", 
@@ -128,11 +126,15 @@
               }
             });
           });
-        } else {
-          // Abort deletion if cancelled
+        } else { 
           console.log('Operation cancelled by the user.');
         }
       });
+    });
+    $('[data-edit-id]').click(function(){    
+      var projectId = $(this).data('edit-id');   
+      var route = 'staff/project/edit/' + projectId
+      loadModalData("#addModal",route,{},{},{})
     });
   });
 </script>  
