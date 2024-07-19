@@ -1,39 +1,38 @@
-# Application de Gestion de Devoirs
+# Project Sharing Management Application in Our Institution
 
 ## Description
-Cette application de gestion de devoirs permet aux administrateurs de gérer les utilisateurs, aux délégués de classe de gérer les étudiants et les groupes, et aux professeurs d'assigner et de suivre les devoirs. Elle inclut des tableaux de bord personnalisés affichant des statistiques pertinentes pour chaque type d'utilisateur.
+This assignment management application allows administrators to manage users, class representatives to manage students and groups, and teachers to assign and track assignments. It includes customized dashboards displaying relevant statistics for each type of user.
 
-## Fonctionnalités
+## Features
 
-### Administrateur
-- Création, modification et suppression de comptes pour les professeurs et les délégués de classe.
-- Accès complet à toutes les fonctionnalités de l'application.
-- Statistiques sur le nombre total d'utilisateurs, de groupes et de devoirs.
+### Administrator
+-Create, modify, and delete accounts for teachers and class representatives.
+-Full access to all application features. 
+-View class representative and teachers feedback
 
-### Délégué de Classe
-- Gestion des informations des étudiants.
-- Création et gestion des groupes d'étudiants.
-- Visualisation des devoirs assignés aux groupes.
-- Statistiques sur les étudiants et les devoirs.
+### Class Representative
+-Manage student information.
+-Create and manage student groups.
+-View assignments assigned to groups.
+Statistics on students and assignments.
 
-### Professeur
-- Création et gestion des devoirs.
-- Assignation des devoirs aux groupes d'étudiants.
-- Suivi des devoirs actifs et complétés.
-- Statistiques sur la performance des étudiants et l'engagement.
+### Teacher
+-Create and manage assignments.
+-Assign assignments to student groups.
+-Track active and completed assignments. 
 
 ### Demonstration
 [video (1).webm](https://github.com/user-attachments/assets/f49ffb85-3ba3-4a45-8ae3-7d0d44747270)
 
 ## Installation
 
-1. Clonez le dépôt :
+1. Clone the repository:
    ```bash
    git clone https://github.com//hobyHardiot/CollegeManagement-Django
    
    cd CollegeManagement-Django
 
-2. Installez le requirements
+2. Install the requirements
 3. 
    ```bash
    python manage.py runser
