@@ -23,7 +23,8 @@ Cette application de gestion de devoirs permet aux administrateurs de gérer les
 - Statistiques sur la performance des étudiants et l'engagement.
 
 ### Demonstration
-![](demo/video.webm)
+![](demo/video2.webm)
+![](demo/video.mp4)
 
 ## Installation
 
