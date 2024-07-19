@@ -22,18 +22,4 @@ Statistics on students and assignments.
 -Track active and completed assignments. 
 
 ### Demonstration
-[video (1).webm](https://github.com/user-attachments/assets/f49ffb85-3ba3-4a45-8ae3-7d0d44747270)
-
-## Installation
-
-1. Clone the repository:
-   ```bash
-   git clone https://github.com//hobyHardiot/CollegeManagement-Django
-   
-   cd CollegeManagement-Django
-
-2. Install the requirements
-3. 
-   ```bash
-   python manage.py runser
-   
+[video (1).webm](https://github.com/user-attachments/assets/f49ffb85-3ba3-4a45-8ae3-7d0d44747270) 
