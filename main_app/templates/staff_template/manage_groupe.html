@@ -30,12 +30,12 @@
 <div class="row g-4">
   {% for prerequisGroupe in prerequisGroupes %}  
   <div class="col-xl-4 col-lg-6 col-md-6">
-      <div class="card {% if prerequisGroupe.status  == 1 %}card-border-shadow-info{% endif %}">
+      <div class="card {% if prerequisGroupe.status  == 1 %}card-border-shadow-info{% endif %} {% if prerequisGroupe.status  == 0 %}card-border-shadow-success{% endif %}">
         <div class="card-header">
           <div class="d-flex align-items-center">
             <div class="d-flex align-items-start"> 
               <div class="me-2">
-                <h5 class="mb-1"><a href="javascript:;" id="open_modal_{{ prerequisGroupe.id }}" data-bs-toggle="modal" data-bs-target="#modal_{{ prerequisGroupe.id }}" class="h5 {% if prerequisGroupe.status == 1 %} stretched-link{% endif %}" data-id="{{ prerequisGroupe.id }}">{{prerequisGroupe.module}}</a>
+                <h5 class="mb-1"><a href="javascript:;" id="open_modal_{{ prerequisGroupe.id }}" data-bs-toggle="modal" data-bs-target="#modal_{{ prerequisGroupe.id }}" class="h5 {% if prerequisGroupe.status == 1 %} stretched-link{% endif %} {% if prerequisGroupe.status == 0 %} stretched-link{% endif %}" data-id="{{ prerequisGroupe.id }}">{{prerequisGroupe.module}}</a>
                 </h5> 
               </div>
             </div>
@@ -68,7 +68,7 @@
             {% elif prerequisGroupe.status  == 1 %}
             <span class="badge d-flex align-items-center bg-label-info ms-auto"><i class="bx bx-star me-2"></i>New</span> 
             {% elif prerequisGroupe.status  == 0 %}
-            <span class="badge d-flex align-items-center bg-label-success ms-auto"><i class="bx bx-check-double me-2"></i>Completed</span> 
+            <span class="badge d-flex align-items-center bg-label-success ms-auto"><i class="bx bx-check-double me-2"></i>Done</span> 
             {% endif %}  
           </div>  
         </div>
@@ -80,10 +80,7 @@
       <div class="modal-content">
         <div class="modal-header">
           <div class="d-flex align-items-center justify-content-between w-100"> 
-            <h5 class="modal-title" id="backDropModalTitle">Groupe {{ prerequisGroupe.module }}</h5>   
-            <div> 
-                <button data-assign-id="{{prerequisGroupe.id}}" class="btn btn-primary mb-3">Assign project </button> 
-            </div> 
+            <h5 class="modal-title" id="backDropModalTitle">Groupe {{ prerequisGroupe.module }}</h5>
           </div>
           <button type="button" class="btn-close" data-bs-dismiss="modal" style="position: absolute;right: 22px; top: 32px;" aria-label="Close"></button>
         </div>
@@ -92,9 +89,14 @@
         </div> 
         <div class="modal-footer">
           <button type="button" class="btn btn-label-secondary" data-bs-dismiss="modal">Close</button>
-          <button id="delivre-btn_{{ prerequisGroupe.id }}" data-bs-dismiss="modal" delivre-groupe-btn="{{ prerequisGroupe.id }}" class="btn btn-primary">
+          {% if prerequisGroupe.status != 0 %}
+          <button id="delivre-btn_{{ prerequisGroupe.id }}"   data-delivre-id="{{ prerequisGroupe.id }}" class="btn btn-primary">
             <span class="d-flex align-items-center justify-content-center text-nowrap"><i class="bx bx-paper-plane bx-xs me-1"></i>Delivre</span>
           </button>
+          {% endif %}   
+          {% if prerequisGroupe.status != 0 %}  
+              <button id="assign-btn_{{ prerequisGroupe.id }}"  data-assign-id="{{prerequisGroupe.id}}" class="btn btn-primary">Assign project </button>  
+          {% endif %}
         </div>
       </div>
     </div>
@@ -135,14 +137,24 @@ $(document).ready(function () {
   $('[data-id]').click(function() 
   { 
     var groupId = $(this).data('id'); 
-    var idModal = "#modal_" + groupId;
+    {% comment %} $("#delivre-btn_"+groupId).hide(); {% endcomment %}
+    var idModal = "#modal_" + groupId; 
     prerequisGroupeId=groupId;
-    
     loadModalData(idModal,"staff/groupe/manage_2/"+groupId,{},function(){ 
-    })      
+      if (verifyIsRowHasNoneElement()) {
+          console.log("The table contains 'None'");
+          $("#delivre-btn_"+groupId).hide();
+
+      } else {
+          console.log("The table does not contain 'None'");
+          $("#assign-btn_"+groupId).hide();
+      }
+      })      
   });
-  $('[data-assign-id]').click(function() 
-  { 
+  $('[data-assign-id]').on("click",function() 
+  {  
+    var id = $(this).data('assign-id');    
+    
     var id = $(this).data('assign-id');  
     var idModal = '#modal_'+id; 
     $.ajax({
@@ -152,12 +164,37 @@ $(document).ready(function () {
       success: function(responseData) {     
         loadModalData(idModal,'staff/groupe/assign2/' + id,{},function(){ 
           $('#success-toasts').toast('show');  
+          $(this).hide();
+          $("#delivre-btn_"+id).show();
+          $("#assign-btn_"+id).hide();
         })    
       },
       error: function(data) {
         console.log("data");
       }
     });
+  });
+  $('[data-delivre-id]').click(function() 
+  { 
+    var id = $(this).data('delivre-id');  
+    var route = "staff/groupe/delivre/" + prerequisGroupeId; 
+    postData(route,{},function(response){ 
+      Swal.fire({
+        title: "Successfully",
+        // text: "You clicked the button!",
+        icon: "success",
+        customClass: {
+            confirmButton: "btn btn-primary"
+        },
+        buttonsStyling: false,
+        showConfirmButton: true,
+        preConfirm: () => {
+          // Ici, vous pouvez définir ce qui se passera lorsque l'utilisateur clique sur "OK".
+          // Par exemple, vous pouvez actualiser la page :
+          location.reload();
+        }
+      })
+    })
   });
   $('[data-delete-id]').click(function(){    
     var id = $(this).data('delete-id'); 
@@ -191,8 +228,27 @@ $(document).ready(function () {
       }
     });
   });
-  function disableButton(){
+  function disableButton(idButton){
+    $(idButton).hide();
+  }
+  function verifyIsRowHasNoneElement(){
+    // Get all rows in the table body
+    var rows = document.querySelectorAll('table tbody tr');
     
+    for (var i = 0; i < rows.length; i++) {
+        // Get all cells in the row
+        var cells = rows[i].querySelectorAll('td');
+        
+        for (var j = 0; j < cells.length; j++) {
+            // Check if the cell contains the text "None"
+            if (cells[j].textContent.trim() === "None") {
+                return true;
+            }
+        }
+    }
+    
+    return false;
+
   }
 }); 
 

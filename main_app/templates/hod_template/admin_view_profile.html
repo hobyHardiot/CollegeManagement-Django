@@ -1,39 +1,58 @@
 {% extends 'main_app/base.html' %}
 {% load static %}
-{% block page_title %}{{page_title}}{% endblock page_title %}
+{% block title %}{{page_title}}{% endblock title %}
 
 {% block content %}
+ 
 
-<section class="content">
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-md-12">
-                <!-- general form elements -->
-                <div class="card card-dark">
-                    <div class="card-header">
-                        <h3 class="card-title">{{page_title}}</h3>
-                    </div>
-
-                    {% include "main_app/form_template.html" with messages=messages  form=form button_text="Update Profile"%}
-                </div>
-                <!-- /.card -->
-
-            </div>
+<h4 class="py-3 mb-4">
+    <span class="text-muted fw-light">User Profile /</span> Profile
+</h4>
+<div class="row">
+<div class="col-12">
+    <div class="card mb-4">
+    <div class="user-profile-header-banner">
+        <img src="{% static 'img/backgrounds/profile-banner.png' %}" alt="Banner image" class="rounded-top img-fluid">
+    </div>
+    <div class="user-profile-header d-flex flex-column flex-sm-row text-sm-start text-center mb-4">
+        <div class="flex-shrink-0 mt-n2 mx-sm-0 mx-auto">
+        <img src="{% if request.user.profile_pic == "" %}{% static 'img/avatars/avatar_12.jpg' %} {% else %} {{ request.user.profile_pic}} {% endif %}" alt="user image" class="d-block h-auto ms-0 ms-sm-4 rounded user-profile-img">
+        </div>
+        <div class="flex-grow-1 mt-3 mt-sm-5">
+        <div class="d-flex align-items-md-end align-items-sm-start align-items-center justify-content-md-between justify-content-start mx-4 flex-md-row flex-column gap-4">
+            <div class="user-profile-info">
+            <h4>{% if request.user.first_name == "" %}Admin{% else %}{{ request.user.first_name}}{% endif %}</h4> 
+            </div> 
+        </div>
         </div>
     </div>
-</section>
+    </div>
+</div>
+</div>
+<div class="card mb-4">
+    <div class="card-body"><div class="d-flex justify-content-between align-items-center">
+        <h5 class="card-header p-0">About</h5>
+        <div class="d-flex justify-content-end"> 
+            <a href="{%url 'admin_edit_profile'%}">
+            <button class="btn btn-secondary create-new btn-primary mx-3" tabindex="0">
+              <span>
+                <i class="bx bx-edit me-sm-1"></i> 
+                <span class="d-none d-sm-inline-block">Edit</span>
+              </span>
+            </button> 
+            </a> 
+        </div>
+      </div>
+      <ul class="list-unstyled mb-4 mt-3">
+        <li class="d-flex align-items-center mb-3"><i class="bx bx-user"></i><span class="fw-medium mx-2">Full Name:</span> <span>{% if request.user.first_name == "" %}Admin{% else %}{{ request.user.first_name}}{% endif %}</span></li>
+        <li class="d-flex align-items-center mb-3"><i class="bx bx-check"></i><span class="fw-medium mx-2">Status:</span> <span>Active</span></li>
+        <li class="d-flex align-items-center mb-3"><i class="bx bx-star"></i><span class="fw-medium mx-2">Role:</span> <span>Admin</span></li> 
+        <li class="d-flex align-items-center mb-3"><i class="bx bx-home"></i><span class="fw-medium mx-2">Adress:</span> <span>{{ request.user.address}}</span></li> 
+      </ul>
+      <small class="text-muted text-uppercase">Contacts</small> 
+        <li class="d-flex align-items-center mb-3"><i class="bx bx-envelope"></i><span class="fw-medium mx-2">Email:</span> <span>{{ request.user.email}}</span></li>
+      </ul> 
+    </div>
+  </div>
 {% endblock content %}
-
-{% block custom_js %}
-  <script>
-      $(document).ready(function(){
-            var ifNotfied = false;
-          $("#id_password").on("change", function(){
-              if (!ifNotfied){
-                ifNotfied = true;
-                alert("After a successful profile update:\n\nYour session would be terminated\nYou would be required to login again")
-              }
-          })
-      })
-  </script>
-{% endblock custom_js %}
+ 

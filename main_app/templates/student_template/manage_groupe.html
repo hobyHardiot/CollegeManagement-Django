@@ -16,19 +16,7 @@
   
   </style>
 {% endblock page_css %}
-{% block content %}
-
-                {% comment %}  <div class="d-flex justify-content-end">
-                    <a href="{% url 'assign_project' %}">
-                        <button class="btn btn-primary mb-3">Assign project</button>
-                    </a>
-                </div> 
-                <div class="d-flex justify-content-end">
-                    <a href="{% url 'assign_project_manytoone' %}">
-                        <button class="btn btn-primary mb-3">Assign project 2</button>
-                    </a>
-                </div>   {% endcomment %}
-
+{% block content %} 
  
 
 <div class="d-flex align-items-center justify-content-between">
@@ -68,9 +56,9 @@
                 {% if prerequisGroupe.status  == -1 %}
                 <span class="badge bg-label-info ms-auto d-flex align-items-center"><i class="bx bx-star me-2"></i>New</span>
                 {% elif prerequisGroupe.status  == 0 %}
-                <span class="badge bg-label-success ms-auto"><i class="bx bx-check-double me-2"></i>Completed</span>
+                <span class="badge bg-label-success ms-auto"><i class="bx bx-check-double me-2"></i>Done</span>
                 {% elif prerequisGroupe.status  == 1 %}
-                <span class="badge bg-label-secondary ms-auto"><i class="bx bx-paper-plane me-2"></i>Delivred</span>
+                <span class="badge bg-label-secondary ms-auto" ><i class="bx bx-paper-plane me-2"></i>Delivred</span>
                 {% endif %}  
             </div>  
             </div>
@@ -82,14 +70,19 @@
         <div class="modal-content">
           <div class="modal-header">
             <div class="d-flex align-items-center justify-content-between w-100"> 
-              <h5 class="modal-title" id="backDropModalTitle">Groupe {{ prerequisGroupe.module }}</h5>  
-              {% comment %} <a href="{% url 'add_groupe' %}"> {% endcomment %}
+              <h5 class="modal-title" id="backDropModalTitle">Groupe {{ prerequisGroupe.module }}</h5>    
+            {% if prerequisGroupe.status  != 0  %} 
                 <button class="btn btn-primary mb-3   collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePaymentMethod_{{ prerequisGroupe.id }}" aria-expanded="false" aria-controls="collapsePaymentMethod" data-newbtn-id="{{ prerequisGroupe.id }}" id="{{ prerequisGroupe.id }}">
                   <span><i id="chevron_{{ prerequisGroupe.id }}" class="bx bx-chevron-left me-md-1"></i>
                     <span class="d-md-inline-block d-none">New</span>
                   </span>
-                </button>
-              {% comment %} </a>   {% endcomment %}
+                </button> 
+            {% endif %}
+            {% if  prerequisGroupe.status  == 0 %}
+            <a  href="{% url 'share_groupe' prerequisGroupe.id %}">
+              <button class="btn btn-primary"><i class="bx bxs-file-pdf">Pdf</i>  </button>
+            </a> 
+            {% endif %}
             </div>
             <button type="button" class="btn-close" style="position: absolute;right: 22px;top: 32px;" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
@@ -124,9 +117,11 @@
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-label-secondary" data-bs-dismiss="modal">Close</button>
-            <button id="delivre-btn_{{ prerequisGroupe.id }}"  {% if prerequisGroupe.status  == 1 %} disabled {% endif %} data-bs-dismiss="modal" delivre-groupe-btn="{{ prerequisGroupe.id }}" class="btn btn-primary">
+            {% if prerequisGroupe.status  != 0  %}
+            <button id="delivre-btn_{{ prerequisGroupe.id }}"  {% if prerequisGroupe.status  == 1 %} disabled {% elif prerequisGroupe.status == -1 %} disable {% endif %} data-bs-dismiss="modal" delivre-groupe-btn="{{ prerequisGroupe.id }}" class="btn btn-primary">
               <span class="d-flex align-items-center justify-content-center text-nowrap"><i class="bx bx-paper-plane bx-xs me-1"></i>Delivre</span>
-            </button>
+            </button> 
+            {% endif %}
           </div>
         </div>
       </div>
@@ -345,17 +340,26 @@
             links.forEach(link => {
                 link.style.pointerEvents = 'none';
                 link.style.cursor = 'default';
-            });
+            }); 
+            $('#delivre-btn_'+prerequisGroupeId).prop('disabled', true);
+
           } else { 
             $('#delivre-btn_'+prerequisGroupeId).prop('disabled', false);
             console.log("Le bouton a été activé.");
           } 
           $('#collapsePaymentMethod_'+prerequisGroupeId).collapse('hide');
-
+          //
+          $('#delivre-btn_'+prerequisGroupeId).prop('disabled', false);
+            
         }else{
           console.log('mbola tsy complet');
+          $('#delivre-btn_'+prerequisGroupeId).prop('disabled', true);
         }
       }) 
+    }
+    function disableDelivreBtn(id){
+      var idBtn = "#delivre-btn_" + id
+      $(this).hide();
     }
     
   });

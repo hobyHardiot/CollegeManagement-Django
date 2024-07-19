@@ -33,15 +33,7 @@
   <div class="menu-inner-shadow"></div>
 
   <ul class="menu-inner py-1">
-    {% if request.user.user_type == '1' %} {% url 'admin_home' as admin_home %}
-    <li
-      class="menu-item {% if admin_home == request.path %} active {% endif %}"
-    >
-      <a href="{{admin_home}}" class="menu-link">
-        <i class="menu-icon tf-icons bx bx-home-alt"></i>
-        <div class="text-truncate" data-i18n="Tables">Home</div>
-      </a>
-    </li>
+    {% if request.user.user_type == '1' %} {% url 'admin_home' as admin_home %} 
     {% url 'admin_view_profile' as admin_view_profile %}
     <li
       class="menu-item {% if admin_view_profile == request.path %} active {% endif %}"
@@ -97,16 +89,7 @@
       </a>
     </li>
 
-    {% elif request.user.user_type == '2' %} {% url 'staff_home' as staff_home
-    %}
-    <li
-      class="menu-item {% if staff_home == request.path %} active {% endif %}"
-    >
-      <a href="{{staff_home}}" class="menu-link">
-        <i class="menu-icon tf-icons bx bx-home-alt"></i>
-        <div class="text-truncate" data-i18n="Tables">Home</div>
-      </a>
-    </li>
+    {% elif request.user.user_type == '2' %}  
     {% url 'staff_view_profile' as staff_view_profile %}
     <li
       class="menu-item {% if staff_view_profile == request.path %} active {% endif %}"
@@ -143,15 +126,7 @@
         <div class="text-truncate" data-i18n="Tables">Feedback</div>
       </a>
     </li>
-    {% else %} {% url 'student_home' as student_home %}
-    <li
-      class="menu-item {% if student_home == request.path %} active {% endif %}"
-    >
-      <a href="{{student_home}}" class="menu-link">
-        <i class="menu-icon tf-icons bx bx-home-alt"></i>
-        <div class="text-truncate" data-i18n="Tables">Home</div>
-      </a>
-    </li>
+    {% else %}
     {% url 'student_view_profile' as student_view_profile %}
     <li
       class="menu-item {% if student_view_profile == request.path %} active {% endif %}"

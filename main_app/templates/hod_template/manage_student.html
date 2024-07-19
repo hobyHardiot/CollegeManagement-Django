@@ -1,4 +1,4 @@
-{% extends 'main_app/base.html' %}
+    {% extends 'main_app/base.html' %}
 {% load static %}
 {% block page_title %}{{page_title}}{% endblock page_title %}
 
@@ -63,7 +63,7 @@
                 <th>Email</th>
                 <th class="text-center">Gender</th>
                 <th class="text-center">Course</th>
-                <th>Avatar</th>
+                <th class="text-center">Avatar</th>
                 <th class="text-end">Actions</th>
             </tr>
         </thead>
@@ -75,11 +75,11 @@
                 <td>{{student.email}}</td>
                 <td class="text-center">{{student.gender}}</td>
                 <td class="text-center">{{student.student.course.name}}</td>
-                <td>
+                <td class="d-flex justify-content-center">
                     {% if student.profile_pic == ""  %}
                     No Image
                     {% else %}
-                    <img class="img img-fluid mb-2" height="56" width="56"
+                    <img class="img img-fluid mb-2 rounded-circle" height="35" width="35"
                         src="{{student.profile_pic}}" alt="">
                     {% endif %}
                 </td> 

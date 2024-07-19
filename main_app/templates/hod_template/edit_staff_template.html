@@ -1,24 +1,135 @@
-{% extends 'main_app/base.html' %}
-{% load static %}
-{% block page_title %}{{page_title}}{% endblock page_title %}
-
-{% block content %}
-
-<section class="content">
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-md-12">
-                <!-- general form elements -->
-                <div class="card card-dark">
-                    <div class="card-header">
-                        <h3 class="card-title">{{page_title}}</h3>
-                    </div>
-                    {% include "main_app/form_template.html" with messages=messages  form=form button_text="Update Staff"%}
-                </div>
-                <!-- /.card -->
-
-            </div>
-        </div>
+<form class="row g-3" data-form-id="{{staff.id}}"  method="POST">
+    {% csrf_token %}
+    <div class="form-group">
+      <label for="id_first_name">First name:</label>
+      <input
+        required
+        value="{{staff.admin.first_name}}"
+        name="firstname"
+        type="text"
+        class="form-control"
+        id="firstname"
+        placeholder="RAKOTONDRALAMBO"
+        aria-describedby="floatingInputHelp"
+      />
     </div>
-</section>
-{% endblock content %}
+
+    <div class="form-group">
+      <label for="id_last_name">Last name:</label>
+      <input
+        required
+        value="{{staff.admin.last_name}}"
+        name="lastname"
+        type="text"
+        class="form-control"
+        id="lastname"
+        placeholder="John Doe"
+        aria-describedby="floatingInputHelp"
+      />
+    </div>
+
+    <div class="form-group">
+      <label for="email">Email:</label>
+      <input
+        value="{{staff.admin.email}}"
+        type="email"
+        name="email"
+        maxlength="320"
+        class="form-control"
+        required=""
+        id="email"
+      />
+    </div>
+
+    <div class="form-group">
+      <label for="id_gender">Gender:</label>
+      <select name="gender" class="form-control" id="id_gender">
+        <option value="M">Male</option>
+
+        <option value="F">Female</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="id_password">Password:</label>
+      <input
+        type="password"
+        name="password"
+        class="form-control" 
+        id="id_password"
+      />
+    </div>
+
+    <div class="form-group">
+      <label for="id_profile_pic">Profile pic:</label>
+      <input
+        value="{{staff.admin.profile_pic}}"
+        type="file"
+        name="profile_pic"
+        accept="image/*"
+        class="form-control" 
+        id="id_profile_pic"
+      />
+    </div>
+
+    <div class="form-group">
+      <label for="id_address">Address:</label>
+      <textarea 
+        name="address"
+        cols="40"
+        rows="10"
+        class="form-control"
+        required=""
+        id="id_address"
+      >{{staff.admin.address}}</textarea>
+    </div>
+
+    <div class="form-group">
+      <label for="id_course">Course:</label>
+      <select name="course" class="form-control" required="" id="id_course">
+
+        {% for level in levels %}
+        <option value="{{ forloop.counter }}">{{level.name}}</option>
+        {% endfor %}
+      </select>
+    </div>
+  </div> 
+
+  <div class="modal-footer pb-0 px-0">
+    <button
+      type="button"
+      class="btn btn-outline-secondary"
+      data-bs-dismiss="modal"
+    >
+      Close
+    </button>
+    <button type="submit" class="btn btn-primary">Save changes</button>
+  </div>
+  </form>
+  <script>
+    $("[data-form-id]").submit(function (event) {
+      event.preventDefault();
+      var id = $(this).data("form-id");
+      var formData = $(this).serialize();
+      $.ajax({
+        url: "http://127.0.0.1:8000/staff/edit/" + id,
+        type: "POST",
+        data: formData + "&csrfmiddlewaretoken=" + "{{ csrf_token }}",
+        success: function (responseData) {
+          if (responseData.success) {
+            $("#success-toasts").toast("show");
+            $("#addModal").modal("hide");
+            setTimeout(function () {
+              location.reload();
+            }, 700);
+          } else {
+            $("#error-toasts").toast("show");
+          }
+        },
+        error: function (data) {
+          console.log("data");
+        },
+      });
+    });
+  </script>
+  

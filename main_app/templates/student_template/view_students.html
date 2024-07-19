@@ -1,75 +1,154 @@
-{% extends 'main_app/base.html' %}
-{% load static %}
-{% block title %}{{page_title}}{% endblock title %}
-
-{% block content %}
+{% extends 'main_app/base.html' %} 
+{% load static %} 
+{% block title %}{{page_title}}{% endblock title %} {% block content %}
 <h4 class="py-3 mb-4">
-    <span class="text-muted fw-light">Students /</span> Lists
+  <span class="text-muted fw-light">Students /</span> Lists
 </h4>
-  <!-- Basic Bootstrap Table -->
-<div class="card">
-    <div class="d-flex justify-content-between align-items-center">
-      <h5 class="card-header">Students</h5> 
-    </div>
-    <div class="table-responsive text-nowrap">
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Mattricule</th>
-                    <th>Full Name</th>
-                    <th class="text-center">Mobile number</th>
-                    <th>Adress</th>  
-                </tr>
-            </thead>
-            <tbody class="table-border-bottom-0">
-                {% for student in students %}
-                <tr>
-                    <td>{{student.numMattr}}</td>
-                    <td>{{student.firstname}}  {{student.lastname}}</td>
-                    <td align="center">{{student.mobile_number}}</td>
-                    <td>{{student.location}}</td>  
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-    </div>
+<div class="card mb-3">
+  <div class="d-flex justify-content-between align-items-center">
+    <h5 class="card-header pb-0">Students</h5>
+  </div>
+  <div class="table-responsive p-3 text-nowrap">
+    <table class="data-table  table nowrap">
+      <thead>
+        <tr>
+          <th>Mattricule</th>
+          <th>Full Name</th>
+          <th class="text-center">Mobile number</th>
+          <th>Adress</th>
+        </tr>
+      </thead>
+      <tbody class="table-border-bottom-0">
+        {% for student in students %}
+        <tr>
+          <td>{{student.numMattr}}</td>
+          <td>{{student.firstname}} {{student.lastname}}</td>
+          <td align="center">{{student.mobile_number}}</td>
+          <td>{{student.location}}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
 </div>
-{% comment %} <section class="content">
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-md-12"> 
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">{{page_title}}</h3>
-                    </div>
-                    <!-- /.card-header -->
-                    <div class="card-body">
-                        <table id="example2" class="table table-bordered table-hover">
-                            <thead class="thead-dark">
-                                <tr>
-                                    <th>Mattricule</th>
-                                    <th>Full Name</th>
-                                    <th>Mobile number</th>
-                                    <th>Adress</th> 
-                                    <th>Level</th>  
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for student in students %}
-                                <tr> 
-                                    <td>{{student.numMattr}}</td>
-                                    <td>{{student.firstname}}  {{student.lastname}}</td>
-                                    <td>{{student.mobile_number}}</td>
-                                    <td>{{student.location}}</td> 
-                                    <td>{{student.niveau}}</td>  
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section> {% endcomment %}
+
+<!-- Export Datatable start -->
+{% comment %} <div class="card mb-30">
+  <div class="pd-20">
+    <h4 class="text-blue h4">Data Table with Export Buttons</h4>
+  </div>
+  <div class="pb-20">
+    <table class="table hover multiple-select-row data-table-export nowrap">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Age</th>
+          <th>Office</th>
+          <th>Address</th>
+          <th>Start Date</th>
+          <th>Salart</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Gloria F. Mead</td>
+          <td>25</td>
+          <td>Sagittarius</td>
+          <td>2829 Trainer Avenue Peoria, IL 61602</td>
+          <td>29-03-2018</td>
+          <td>$162,700</td>
+        </tr>
+        <tr>
+          <td>Andrea J. Cagle</td>
+          <td>30</td>
+          <td>Gemini</td>
+          <td>1280 Prospect Valley Road Long Beach, CA 90802</td>
+          <td>29-03-2018</td>
+          <td>$162,700</td>
+        </tr>
+        <tr>
+          <td>Andrea J. Cagle</td>
+          <td>20</td>
+          <td>Gemini</td>
+          <td>2829 Trainer Avenue Peoria, IL 61602</td>
+          <td>29-03-2018</td>
+          <td>$162,700</td>
+        </tr>
+        <tr>
+          <td>Andrea J. Cagle</td>
+          <td>30</td>
+          <td>Sagittarius</td>
+          <td>1280 Prospect Valley Road Long Beach, CA 90802</td>
+          <td>29-03-2018</td>
+          <td>$162,700</td>
+        </tr>
+        <tr>
+          <td>Andrea J. Cagle</td>
+          <td>25</td>
+          <td>Gemini</td>
+          <td>2829 Trainer Avenue Peoria, IL 61602</td>
+          <td>29-03-2018</td>
+          <td>$162,700</td>
+        </tr>
+        <tr>
+          <td>Andrea J. Cagle</td>
+          <td>20</td>
+          <td>Sagittarius</td>
+          <td>1280 Prospect Valley Road Long Beach, CA 90802</td>
+          <td>29-03-2018</td>
+          <td>$162,700</td>
+        </tr>
+        <tr>
+          <td>Andrea J. Cagle</td>
+          <td>18</td>
+          <td>Gemini</td>
+          <td>1280 Prospect Valley Road Long Beach, CA 90802</td>
+          <td>29-03-2018</td>
+          <td>$162,700</td>
+        </tr>
+        <tr>
+          <td>Andrea J. Cagle</td>
+          <td>30</td>
+          <td>Sagittarius</td>
+          <td>1280 Prospect Valley Road Long Beach, CA 90802</td>
+          <td>29-03-2018</td>
+          <td>$162,700</td>
+        </tr>
+        <tr>
+          <td>Andrea J. Cagle</td>
+          <td>30</td>
+          <td>Sagittarius</td>
+          <td>1280 Prospect Valley Road Long Beach, CA 90802</td>
+          <td>29-03-2018</td>
+          <td>$162,700</td>
+        </tr>
+        <tr>
+          <td>Andrea J. Cagle</td>
+          <td>30</td>
+          <td>Gemini</td>
+          <td>1280 Prospect Valley Road Long Beach, CA 90802</td>
+          <td>29-03-2018</td>
+          <td>$162,700</td>
+        </tr>
+        <tr>
+          <td>Andrea J. Cagle</td>
+          <td>30</td>
+          <td>Gemini</td>
+          <td>1280 Prospect Valley Road Long Beach, CA 90802</td>
+          <td>29-03-2018</td>
+          <td>$162,700</td>
+        </tr>
+        <tr>
+          <td>Andrea J. Cagle</td>
+          <td>30</td>
+          <td>Gemini</td>
+          <td>1280 Prospect Valley Road Long Beach, CA 90802</td>
+          <td>29-03-2018</td>
+          <td>$162,700</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div> {% endcomment %}
+<!-- Export Datatable End -->
 {% endblock content %}

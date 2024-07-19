@@ -1,0 +1,29 @@
+{
+    "data": [
+      {
+        "full_name": "John Doe",
+        "email": "john.doe@example.com",
+        "role": "Subscriber",
+        "current_plan": "Basic",
+        "billing": "Monthly",
+        "status": "Pending"
+      },
+      {
+        "full_name": "Jane Smith",
+        "email": "jane.smith@example.com",
+        "role": "Author",
+        "current_plan": "Premium",
+        "billing": "Yearly",
+        "status": "Active"
+      },
+      {
+        "full_name": "Alice Johnson",
+        "email": "alice.johnson@example.com",
+        "role": "Maintainer",
+        "current_plan": "Enterprise",
+        "billing": "Quarterly",
+        "status": "Inactive"
+      }
+    ]
+  }
+  

@@ -5,8 +5,7 @@
 {% block content %}
   <h4 class="py-3 mb-4">
     <span class="text-muted fw-light">Students /</span> Manage
-  </h4>
-  <!-- Basic Bootstrap Table -->
+  </h4> 
   <div class="card">
     <div class="d-flex justify-content-between align-items-center">
       <h5 class="card-header">{{page_title}}</h5>
@@ -32,8 +31,8 @@
           </div> 
       </div>
     </div>
-    <div class="table-responsive text-nowrap">
-        <table class="table">
+    <div class="table-responsive p-3 text-nowrap">
+        <table class="table data-table">
             <thead class="thead-dark">
                 <tr>
                     <th>Mattricule</th>
@@ -48,15 +47,15 @@
                 {% for student in students %}
                 <tr> 
                     <td>{{student.numMattr}}</td>
-                    <td>{{student.firstname}}, {{student.lastname}}</td>
+                    <td>{{student.firstname}} {{student.lastname}}</td>
                     <td class="text-center">{{student.mobile_number}}</td>
                     <td class="text-center">{{student.location}}</td> 
                     <td class="text-center">{{student.niveau}}</td> 
                     <td align="right">
-                        <a href="{% url 'edit_students' student.id %}">
+                        <a data-edit-id="{{student.id}}"  href="javascript:void(0)">
                           <i class="bx bx-edit-alt me-1"></i>
                         </a>
-                        <a href="{% url 'delete_students' student.id %}" onclick="return confirm('Are you sure you want to delete this student ?')">
+                        <a data-delete-id="{{student.id}}" href="javascript:void(0)">
                           <i class="bx bx-trash me-2"></i>
                         </a> 
                     </td>  
@@ -89,18 +88,62 @@
       Mattricule already exists
     </div>
   </div>
+
+
+
+ 
 {% endblock content %}
 {% block page_js %} 
 <script> 
+
   axios.defaults.xsrfHeaderName = 'X-CSRFToken';
   axios.defaults.xsrfCookieName = 'csrftoken'; 
   $(document).ready(function () {  
     $('#addBtn').click(function() 
     {    
-      loadModalData('#addModal','students/add',{},function(){ 
+      $("#exampleModalLabel2").text("Add student");
+      loadModalData('#addModal','students/add',{},function(){   
       })    
     }); 
+    $('[data-edit-id]').click(function(){    
+      var studentId = $(this).data('edit-id');   
+      var route = 'students/edit/' + studentId
+      loadModalData("#addModal",route,{},{},{})
+      $("#exampleModalLabel2").text("Edit student");
+    });
+    $('[data-delete-id]').click(function(){    
+      var studentId = $(this).data('delete-id'); 
+      Swal.fire({
+        title: 'Are you sure?',
+        text: "Once deleted, you cannot undo this action.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!',
+        cancelButtonText: 'No, keep it'
+      }).then((result) => {
+        if (result.isConfirmed) { 
+          postData("students/delete/"+studentId, {}, function(response) { 
+            Swal.fire({
+              title: "Deletion successful", 
+              icon: "success",
+              customClass: {
+                  confirmButton: "btn btn-primary"
+              },
+              buttonsStyling: false,
+              showConfirmButton: true,
+              preConfirm: () => { 
+                location.reload();
+              }
+            });
+          });
+        } else { 
+          console.log('Operation cancelled by the user.');
+        }
+      });
+    });
  
-  }); 
+  });
 </script>
 {% endblock page_js %}

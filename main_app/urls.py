@@ -1,4 +1,4 @@
-"""college_management_system URL Configuration
+"""django-sneat-gestion-projet URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/3.1/topics/http/urls/
@@ -53,6 +53,9 @@ urlpatterns = [
          name='admin_notify_staff'),
     path("admin_view_profile", hod_views.admin_view_profile,
          name='admin_view_profile'),
+    path("admin_edit_profile", hod_views.admin_edit_profile,
+         name='admin_edit_profile'),
+
     path("check_email_availability", hod_views.check_email_availability,
          name="check_email_availability"),
     path("session/manage/", hod_views.manage_session, name='manage_session'),
@@ -102,6 +105,8 @@ urlpatterns = [
     path("staff/home/", staff_views.staff_home, name='staff_home'), 
     path("staff/feedback/", staff_views.staff_feedback, name='staff_feedback'),
     path("staff/view/profile/", staff_views.staff_view_profile, name='staff_view_profile'),    
+    path("staff/edit/profile/", staff_views.staff_edit_profile, name='staff_edit_profile'),    
+
     path("staff/fcmtoken/", staff_views.staff_fcmtoken, name='staff_fcmtoken'), 
     path("staff/groupe/view", staff_views.staff_view_groupe, name='staff_view_groupe'),  
     path("staff/groupe/add", staff_views.staff_add_groupe, name='staff_add_groupe'),
@@ -115,6 +120,7 @@ urlpatterns = [
     path("staff/project/delete/<int:project_id>", staff_views.delete_project, name='delete_project'),
 
     path("staff/groupe/assign", staff_views.assign_project, name='assign_project'),
+    path("staff/groupe/delivre/<int:prerequisGroupe_id>", staff_views.delivre_project, name='delivre_project'),
     path("staff/groupe/assign2/<int:prerequisGroupe_id>", staff_views.assign_project_manytoone, name='assign_project_manytoone'),
 
     # Student
@@ -123,6 +129,8 @@ urlpatterns = [
          name='student_feedback'),
     path("student/view/profile/", student_views.student_view_profile,
          name='student_view_profile'),
+    path("student/edit/profile/", student_views.student_edit_profile,
+         name='student_edit_profile'),
     path("student/fcmtoken/", student_views.student_fcmtoken,
          name='student_fcmtoken'),  
 
@@ -135,4 +143,6 @@ urlpatterns = [
     path("groupe/add", student_views.add_groupe, name='add_groupe'),
     path("groupe/edit/<int:groupe_id>", student_views.edit_groupe, name='edit_groupe'),
     path("groupe/delivre/<int:prerequisGroupe_id>", student_views.delivre_groupe, name='delivre_groupe'),
+
+    path("groupe/share/<int:prerequisGroupe_id>", student_views.share_groupe,  {'generate_pdf': True}, name='share_groupe'), 
 ]

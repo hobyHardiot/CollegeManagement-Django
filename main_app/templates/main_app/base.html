@@ -16,7 +16,7 @@
     <link rel="shortcut icon" type="image/x-icon" href="{% static 'img/favicon/favicon.ico' %}" />
  
     <!-- Include the styles partial -->
-  {% include "/home/mihobisoa/Téléchargements/CollegeManagement-Django/templates/layout/partials/styles.html" %}
+  {% include "layout/partials/styles.html" %}
 
     {% block vendor_css %}{% endblock vendor_css %}
 
@@ -25,7 +25,7 @@
 
 
     <!-- Include the scripts partial (required ) -->
-  {% include "/home/mihobisoa/Téléchargements/CollegeManagement-Django/templates/layout/partials/scripts_includes.html" %}
+  {% include "layout/partials/scripts_includes.html" %}
 
   </head>
 
@@ -37,7 +37,7 @@
       
           {% comment %} {% if is_menu %} {% endcomment %}
           <!-- Menu: Start -->
-          {% include "/home/mihobisoa/Téléchargements/CollegeManagement-Django/templates/layout/partials/menu/vertical/vertical_menu.html" %}
+          {% include "layout/partials/menu/vertical/vertical_menu.html" %}
           <!-- Menu: End -->
           {% comment %} {% endif %} {% endcomment %}
       
@@ -47,7 +47,7 @@
       
             {% comment %} {% if is_navbar %} {% endcomment %}
             <!-- Navbar: Start -->
-            {% include "/home/mihobisoa/Téléchargements/CollegeManagement-Django/templates/layout/partials/navbar/navbar.html" %}
+            {% include "layout/partials/navbar/navbar.html" %}
             <!-- Navbar: End -->
             {% comment %} {% endif %} {% endcomment %}
       
@@ -68,7 +68,7 @@
       
                 {% comment %} {% if is_footer %} {% endcomment %}
                 <!-- Footer: Start -->
-                {% include "/home/mihobisoa/Téléchargements/CollegeManagement-Django/templates/layout/partials/footer/footer.html" %}
+                {% include "layout/partials/footer/footer.html" %}
                 <!-- Footer: End -->
                 {% comment %} {% endif %} {% endcomment %}
       
@@ -87,7 +87,7 @@
         <div class="drag-target"></div>
     </div> 
       
-    {% include "/home/mihobisoa/Téléchargements/CollegeManagement-Django/templates/layout/partials/scripts.html" %}
+    {% include "layout/partials/scripts.html" %}
 
 
     <!--Vendors Javascript-->

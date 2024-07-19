@@ -36,8 +36,8 @@
           </div> 
       </div>
     </div>
-    <div class="table-responsive text-nowrap">
-      <table class="table">
+    <div class="table-responsive p-3 text-nowrap">
+      <table class="table data-table">
         <thead>
           <tr>
             <th>#</th>
@@ -98,6 +98,8 @@
   $(document).ready(function () { 
     $("#addBtn").click(function(){  
       loadModalData("#addModal","{% url 'add_project' %}",{},{},{})
+
+      $("#exampleModalLabel2").text("Add student");
     })
     $('[data-delete-id]').click(function(){    
       var projectId = $(this).data('delete-id'); 
@@ -135,6 +137,7 @@
       var projectId = $(this).data('edit-id');   
       var route = 'staff/project/edit/' + projectId
       loadModalData("#addModal",route,{},{},{})
+      $("#exampleModalLabel2").text("Edit student");
     });
   });
 </script>  

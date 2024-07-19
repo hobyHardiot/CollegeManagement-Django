@@ -16,11 +16,11 @@ from web_project import TemplateLayout
 def login_page(request):
     if request.user.is_authenticated:
         if request.user.user_type == '1':
-            return redirect(reverse("admin_home"))
+            return redirect(reverse("admin_view_profile"))
         elif request.user.user_type == '2':
-            return redirect(reverse("staff_home"))
+            return redirect(reverse("staff_view_profile"))
         else:
-            return redirect(reverse("student_home"))
+            return redirect(reverse("student_view_profile"))
     return render(request, 'main_app/login.html')
 
 
@@ -34,11 +34,11 @@ def doLogin(request, **kwargs):
         if user != None:
             login(request, user)
             if user.user_type == '1':
-                return redirect(reverse("admin_home"))
+                return redirect(reverse("admin_view_profile"))
             elif user.user_type == '2':
-                return redirect(reverse("staff_home"))
+                return redirect(reverse("staff_view_profile"))
             else:
-                return redirect(reverse("student_home"))
+                return redirect(reverse("student_view_profile"))
         else:
             messages.error(request, "Invalid details")
             return redirect("/")

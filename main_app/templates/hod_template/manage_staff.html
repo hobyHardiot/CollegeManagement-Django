@@ -1,6 +1,6 @@
 {% extends 'main_app/base.html' %}
 {% load static %}
-{% block page_title %}{{page_title}}{% endblock page_title %}
+{% block title %}{{page_title}}{% endblock title %}
 
 {% block content %}
 <h4 class="py-3 mb-4">
@@ -12,43 +12,24 @@
       <h5 class="card-header">{{page_title}}</h5>
       <div class="d-flex justify-content-end">
        
-          <a href=" {% url 'add_staff' %}"> Add
-          </a>
-          {% comment %} <button id="addBtn" class="btn btn-secondary create-new btn-primary mx-3" tabindex="0" aria-controls="DataTables_Table_0" type="button"  data-bs-toggle="modal" data-bs-target="#smallModal">
+          {% comment %} <a href=" {% url 'add_staff' %}"> {% endcomment %}
+          <button id="addBtn" class="btn btn-secondary create-new btn-primary mx-3" tabindex="0" aria-controls="DataTables_Table_0" type="button"  data-bs-toggle="modal" data-bs-target="#addModal">
             <span>
               <i class="bx bx-plus me-sm-1"></i> 
               <span class="d-none d-sm-inline-block">Add</span>
             </span>
-          </button>  {% endcomment %}
+          </button>  
+          {% comment %} </a> {% endcomment %}
           <div class="modal fade" id="addModal" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog modal-sm" role="document">
+            <div class="modal-dialog modal-md" role="document">
               <div class="modal-content">
                 <div class="modal-header">
-                  <h5 class="modal-title" id="exampleModalLabel2">Modal title</h5>
+                  <h5 class="modal-title" id="exampleModalLabel2">Add proff</h5>
                   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
-                  <div class="row">
-                    <div class="col mb-3">
-                      <label for="nameSmall" class="form-label">Name</label>
-                      <input type="text" id="nameSmall" class="form-control" placeholder="Enter Name">
-                    </div>
-                  </div>
-                  <div class="row g-2">
-                    <div class="col mb-0">
-                      <label class="form-label" for="emailSmall">Email</label>
-                      <input type="email" class="form-control" id="emailSmall" placeholder="xxxx@xxx.xx">
-                    </div>
-                    <div class="col mb-0">
-                      <label for="dobSmall" class="form-label">DOB</label>
-                      <input id="dobSmall" type="date" class="form-control">
-                    </div>
-                  </div>
-                </div>
-                <div class="modal-footer">
-                  <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
-                  <button type="button" class="btn btn-primary">Save changes</button>
-                </div>
+                <div class="modal-body">  
+
+                </div> 
               </div>
             </div>
           </div> 
@@ -63,7 +44,7 @@
                     <th>Email</th>
                     <th class="text-center">Gender</th>
                     <th class="text-center">Course</th>
-                    <th>Avatar</th>
+                    <th class="text-center">Avatar</th>
                     <th class="text-end">Actions</th>
                 </tr>
             </thead>
@@ -75,19 +56,19 @@
                     <td>{{staff.email}}</td>
                     <td class="text-center">{{staff.gender}}</td>
                     <td class="text-center">{{staff.staff.course.name}}</td>
-                    <td>
+                    <td class="d-flex justify-content-center">
                         {% if staff.profile_pic == ""  %}
                         No Image
                         {% else %}
-                        <img class="img img-fluid mb-2" height="56" width="56"
+                        <img class="img rounded-circle img-fluid mb-2" height="35" width="35"
                             src="{{staff.profile_pic}}" alt="">
                         {% endif %}
                     </td> 
                     <td align="right">
-                        <a href="{% url 'edit_staff' staff.staff.id %}">
+                        <a data-edit-id="{{staff.staff.id}}"  href="javascript:void(0)">
                           <i class="bx bx-edit-alt me-1"></i>
                         </a>
-                        <a href="{% url 'delete_staff' staff.staff.id %}" onclick="return confirm('Are you sure you want to delete this project ?')">
+                        <a  data-delete-id="{{staff.staff.id}}" href="javascript:void(0)">
                           <i class="bx bx-trash me-2"></i>
                         </a> 
                     </td>  
@@ -97,4 +78,79 @@
         </table>
     </div>
   </div>
+  <div id="success-toasts" class="bs-toast toast toast-ex animate__animated my-2   bg-success" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="2000">
+    <div class="toast-header">
+      <i class="bx bx-check me-2"></i>
+      <div class="me-auto fw-medium">Success</div>
+      <small>now</small>
+      <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+    <div class="toast-body">
+      Added successfully
+    </div>
+  </div>
+  <div id="error-toasts" class="bs-toast toast toast-ex animate__animated my-2   bg-danger" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="2000">
+    <div class="toast-header">
+      <i class="bx bx-error-alt me-2"></i>
+      <div class="me-auto fw-medium">Error</div>
+      <small>now</small>
+      <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+    <div class="toast-body">
+      Error
+    </div>
+  </div>
 {% endblock content %} 
+{% block page_js %} 
+<script> 
+
+  axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+  axios.defaults.xsrfCookieName = 'csrftoken'; 
+  $(document).ready(function () {  
+    $('#addBtn').click(function() 
+    {    
+      $("#exampleModalLabel2").text("Add proff");
+      loadModalData('#addModal','staff/add',{},function(){   
+      })    
+    }); 
+     $('[data-edit-id]').click(function(){    
+      var studentId = $(this).data('edit-id');   
+      var route = 'staff/edit/' + studentId
+      loadModalData("#addModal",route,{},{},{})
+      $("#exampleModalLabel2").text("Edit staff");
+    }); 
+    $('[data-delete-id]').click(function(){    
+      var studentId = $(this).data('delete-id'); 
+      Swal.fire({
+        title: 'Are you sure?',
+        text: "Once deleted, you cannot undo this action.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!',
+        cancelButtonText: 'No, keep it'
+      }).then((result) => {
+        if (result.isConfirmed) { 
+          postData("staff/delete/"+studentId, {}, function(response) { 
+            Swal.fire({
+              title: "Deletion successful", 
+              icon: "success",
+              customClass: {
+                  confirmButton: "btn btn-primary"
+              },
+              buttonsStyling: false,
+              showConfirmButton: true,
+              preConfirm: () => { 
+                location.reload();
+              }
+            });
+          });
+        } else { 
+          console.log('Operation cancelled by the user.');
+        }
+      });
+    });
+  });
+</script>
+{% endblock page_js %}

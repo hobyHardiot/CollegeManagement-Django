@@ -1,42 +1,58 @@
 <form class="row g-3" data-form-id="{{project.id}}" method="POST">
-  {% csrf_token %} 
-    <div class="col-12  mb-3 form-floating">
-      <input value="{{project.nom}}" required name="nom" type="text" class="form-control" id="nom" placeholder="Entre title here" aria-describedby="floatingInputHelp">
-      <label for="nom">Title</label> 
-    </div>   
-    <div class="col-12  mb-3"> 
-      <label for="description">Description</label> 
-      <textarea required name="description" class="form-control"  rows="3">{{project.description}}</textarea>
-    </div>   
-    <div class="modal-footer pb-0 px-0">
-      <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
-      <button type="submit"   class="btn btn-primary">Save changes</button>
-    </div>
-  </form>
-  <script> 
-  $("[data-form-id]").submit(function(event) 
-  {
-    event.preventDefault();  
-    var id = $(this).data('form-id'); 
-    var formData = $(this).serialize(); 
+  {% csrf_token %}
+  <div class="col-12 mb-3 form-floating">
+    <input
+      value="{{project.nom}}"
+      required
+      name="nom"
+      type="text"
+      class="form-control"
+      id="nom"
+      placeholder="Entre title here"
+      aria-describedby="floatingInputHelp"
+    />
+    <label for="nom">Title</label>
+  </div>
+  <div class="col-12 mb-3">
+    <label for="description">Description</label>
+    <textarea required name="description" class="form-control" rows="3">
+{{project.description}}</textarea
+    >
+  </div>
+  <div class="modal-footer pb-0 px-0">
+    <button
+      type="button"
+      class="btn btn-outline-secondary"
+      data-bs-dismiss="modal"
+    >
+      Close
+    </button>
+    <button type="submit" class="btn btn-primary">Save changes</button>
+  </div>
+</form>
+<script>
+  $("[data-form-id]").submit(function (event) {
+    event.preventDefault();
+    var id = $(this).data("form-id");
+    var formData = $(this).serialize();
     $.ajax({
-      url: 'edit/' + id,
-      type: 'POST',
-      data: formData + '&csrfmiddlewaretoken=' + '{{ csrf_token }}',  
-      success: function(responseData) {    
+      url: "edit/" + id,
+      type: "POST",
+      data: formData + "&csrfmiddlewaretoken=" + "{{ csrf_token }}",
+      success: function (responseData) {
         if (responseData.success) {
-          $('#success-toasts').toast('show'); 
-          $('#addModal').modal('hide'); 
-          setTimeout(function() {
-              location.reload();
+          $("#success-toasts").toast("show");
+          $("#addModal").modal("hide");
+          setTimeout(function () {
+            location.reload();
           }, 700);
         } else {
-          $('#error-toasts').toast('show');
+          $("#error-toasts").toast("show");
         }
       },
-      error: function(data) {
+      error: function (data) {
         console.log("data");
-      }
+      },
     });
-  }); 
-  </script>
+  });
+</script>

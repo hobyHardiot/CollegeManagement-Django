@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style> 
+table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+td, th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}
+
+tr:nth-child(even) {
+  background-color: #dddddd;
+}
+  </style>
+</head>
+<body>
+  <h2 align="center">Groupe {{prerequisGroupes.module}} L3 2024</h2>
+  <table class="table data-table-export">
+    <thead>
+      <tr>
+        <th>Mattricule</th>
+        <th>Full name</th>
+        <th class="text-center">Groupe</th>
+        {% if prerequisGroupes.status  == 0  %}<th class="text-center">Project</th>{% endif %} 
+        {% if prerequisGroupes.status  != 1 and prerequisGroupes.status != 0    %}
+          <th class="text-center">#</th>
+        {% endif %}
+      </tr>
+    </thead>
+    <tbody> 
+      {% for groupe in groupes %}
+      <tr>
+          <td>
+              {% for etudiant in groupe.etudiants.all %}
+                  {{ etudiant.numMattr }}<br>
+              {% endfor %}
+          </td>
+          <td>
+              {% for etudiant in groupe.etudiants.all %}
+                  {{ etudiant.firstname }} {{ etudiant.lastname }}<br>
+              {% endfor %}
+          </td>
+          <td class="text-center">{{ groupe.numero }}</td>
+          {% if prerequisGroupes.status  == 0  %}<td class="text-center">{{ groupe.projet }}</td>{% endif %}
+          {% if prerequisGroupes.status  != 1 and prerequisGroupes.status != 0  %} 
+          <td align="center"> 
+              <a  href="{% url 'edit_groupe' groupe.id %}">
+                <i class="bx bx-edit-alt me-1"></i>
+              </a> 
+          </td>  
+          {% endif %}
+      </tr>
+      {% endfor %}
+      <!-- Pour les étudiants sans groupe -->
+      {% for etudiant in etudiants_sans_groupe %}
+      <tr>
+          <td >
+              {{ etudiant.numMattr }}
+          </td>
+          <td >
+              {{ etudiant.firstname }} {{ etudiant.lastname }}
+          </td>
+          <td></td>
+          <td></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</body>
+</html>

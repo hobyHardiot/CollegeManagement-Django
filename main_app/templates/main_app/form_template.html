@@ -12,7 +12,7 @@
     <!-- /.card-body -->
 
     <div class="card-footer">
-        <button type="submit" onclick="alert('Successfully')" class="btn btn-primary btn-block">
+        <button type="submit" onClick="alert('Operation successfully')" class="btn btn-primary btn-block">
             {% if button_text %}
             {{button_text}}
             {% else %}
@@ -20,5 +20,6 @@
             {% endif %}
 
         </button>
+        <a href="javascript:history.back()"><button type="button" class="btn btn-label-secondary">Cancel</button></a>
     </div>
 </form>

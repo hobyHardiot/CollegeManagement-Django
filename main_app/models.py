@@ -229,7 +229,7 @@ class PrerequisGroupe(models.Model):
     author = models.ForeignKey(CustomUser, on_delete=models.CASCADE, default="")
     description = models.TextField(max_length=255, blank=True) 
     def __str__(self):
-        return self.module
+        return f"{self.module} {self.status}"
     
 
 class Groupe(models.Model):
