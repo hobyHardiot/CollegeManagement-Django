@@ -22,9 +22,19 @@ Cette application de gestion de devoirs permet aux administrateurs de gérer les
 - Suivi des devoirs actifs et complétés.
 - Statistiques sur la performance des étudiants et l'engagement.
 
+### Demonstration
+![](demo/video.webm)
+
 ## Installation
 
 1. Clonez le dépôt :
    ```bash
    git clone https://github.com//hobyHardiot/CollegeManagement-Django
-   cd nom-du-repo
+   
+   cd CollegeManagement-Django
+
+2. Installez le requirements
+3. 
+   ```bash
+   python manage.py runser
+   
