@@ -7,7 +7,9 @@ This assignment management application allows administrators to manage users, cl
 
 ### Administrator
 -Create, modify, and delete accounts for teachers and class representatives.
+
 -Full access to all application features. 
+
 -View class representative and teachers feedback
 
 ### Class Representative
